@@ -12,7 +12,10 @@
   "author": "Bryan Mytko",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^14.4.0"
+    "@types/i18n": "^0.13.4",
+    "discord.js": "^14.4.0",
+    "dotenv": "^16.0.2",
+    "i18n": "^0.15.1"
   },
   "devDependencies": {
     "@types/node": "^18.7.18",
