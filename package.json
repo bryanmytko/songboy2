@@ -15,7 +15,8 @@
     "@types/i18n": "^0.13.4",
     "discord.js": "^14.4.0",
     "dotenv": "^16.0.2",
-    "i18n": "^0.15.1"
+    "i18n": "^0.15.1",
+    "tslog": "^3.3.4"
   },
   "devDependencies": {
     "@types/node": "^18.7.18",
