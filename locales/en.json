@@ -1,0 +1,17 @@
+{
+  "status": {
+    "connected": "Songboy has connected!",
+    "disconnected": "Songboy has disconnected."
+  },
+  "command": {
+    "missingProperty": "[WARNING] The command at '%s' is missing a required \"data\" or \"execute\" property.",
+    "missing": "No command matching '%s' was found.",
+    "error": "There was an error while executing this command!"
+  },
+  "commands": {
+    "song": {
+      "name": "song",
+      "desc": "Play or add a song to the queue."
+    }
+  }
+}
