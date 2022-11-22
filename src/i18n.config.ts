@@ -3,7 +3,7 @@ import path from "path";
 
 export const i18n = new I18n({
   defaultLocale: "en",
-  directory: path.join(__dirname, "locales"),
+  directory: path.join(__dirname, "..", "locales"),
   locales: ["en"],
   objectNotation: true,
 });
