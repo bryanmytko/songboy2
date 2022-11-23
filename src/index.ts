@@ -9,7 +9,7 @@ import { i18n } from "./i18n.config";
 require("dotenv").config();
 const log: Logger = new Logger();
 const { DISCORD_BOT_TOKEN } = process.env;
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 
 client.commands = new Collection<string, Command>();
 
@@ -35,10 +35,6 @@ client.once(Events.ClientReady, c => {
 
 client.login(DISCORD_BOT_TOKEN);
 
-client.on("disconnected", (): void => {
-  log.info(i18n.__("status.disconnected"));
-});
-
 client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
@@ -56,4 +52,8 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction
       .reply({ content: i18n.__("command.error"), ephemeral: true });
   }
+});
+
+client.on("disconnected", (): void => {
+  log.info(i18n.__("status.disconnected"));
 });
