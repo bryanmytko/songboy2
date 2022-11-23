@@ -1,6 +1,6 @@
 {
   "status": {
-    "connected": "Songboy has connected!",
+    "connected": "Connected as '%s'!",
     "disconnected": "Songboy has disconnected."
   },
   "command": {

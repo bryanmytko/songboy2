@@ -29,8 +29,8 @@ for (const file of commandFiles) {
   }
 }
 
-client.once("ready", (): void => {
-  log.info(i18n.__("status.connected"));
+client.once(Events.ClientReady, c => {
+  log.info(i18n.__mf("status.connected", c.user.username));
 });
 
 client.login(DISCORD_BOT_TOKEN);
