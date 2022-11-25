@@ -7,16 +7,16 @@ const player = new Player();
 
 const execute = async (interaction: CommandInteraction) => {
   console.log(interaction)
-  const { channelId, guildId } = interaction;
-  const channel = await interaction.client.channels.fetch(channelId);
-
-  //const voice_channel_id = interaction.guild.members.cache.get(interaction.member.user.id).voice.channelId
+  /* TODO guildId should pass to Player instead of relying on interaction */
+  const { guildId } = interaction;
 
   const memberId = interaction.member?.user.id || '';
-  const voiceChannelId = interaction.guild?.members.cache.get(memberId)?.voice.channelId;
+  const voiceChannelId = interaction
+    .guild?.members.cache.get(memberId)?.voice.channelId;
 
   await interaction.reply("Queueing or playing a song!");
 
+  /* TODO placeholder */
   player.addSong({
     input: "Foo Fighters - The Best",
     message: "This one is great! ",
