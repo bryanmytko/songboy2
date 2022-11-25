@@ -7,9 +7,16 @@ import { Command } from "./types";
 import { i18n } from "./i18n.config";
 
 require("dotenv").config();
-const log: Logger = new Logger();
 const { DISCORD_BOT_TOKEN } = process.env;
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
+
+const log: Logger = new Logger();
+
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildVoiceStates
+  ]
+});
 
 client.commands = new Collection<string, Command>();
 
@@ -54,6 +61,7 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 });
 
+/* TODO does this even exist anymore */
 client.on("disconnected", (): void => {
   log.info(i18n.__("status.disconnected"));
 });

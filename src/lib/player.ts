@@ -1,40 +1,45 @@
 import { joinVoiceChannel } from '@discordjs/voice';
-import { channel } from 'diagnostics_channel';
-import { Channel, Guild, Interaction } from 'discord.js';
+const { VoiceConnectionStatus } = require('@discordjs/voice');
+import { Logger } from "tslog";
+
+const log: Logger = new Logger();
 
 interface SongParams {
   input: string,
   message: string,
   source: string, // enum?
   voiceChannelId: string | null | undefined,
-  // guildId: string | null,
   interaction: any,
-  // state: string
-}
+};
 
 class Player {
   constructor() {
-    //this.voiceChannel;
+    log.info('Instantiating Player class.');
   }
 
   async addSong(params: SongParams) {
     const { interaction, voiceChannelId } = params;
-    if (!interaction.guildId || !interaction.guild) return console.log('Error. Must join a voice channel!');
-    if (!voiceChannelId) return console.log("ERRRRRROR")
 
+    if (!interaction.guildId || !interaction.guild) {
+      /* Remove this when interaction type becomes enforceable */
+      return log.error('Error. Missing guild.');
+    }
 
-    console.log('Joining boice channel', voiceChannelId)
+    if (!voiceChannelId) {
+      /* This needs to bubble up to the user
+         or be handled in the calling command. */
+      return log.error("Error. Must be in a voice channel.");
+    }
 
     const connection = await joinVoiceChannel({
-      channelId: voiceChannelId, //"970288330900111360",
+      channelId: voiceChannelId,
       guildId: interaction.guildId,
       adapterCreator: interaction.guild.voiceAdapterCreator,
     });
 
-    const { VoiceConnectionStatus } = require('@discordjs/voice');
-
     connection.on(VoiceConnectionStatus.Ready, () => {
-      console.log('The connection has entered the Ready state - ready to play audio!');
+      /* Placeholder */
+      log.info('The connection has entered the Ready state. ready to play audio!');
     });
   }
 };
