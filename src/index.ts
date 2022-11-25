@@ -52,8 +52,11 @@ client.on(Events.InteractionCreate, async interaction => {
     return;
   }
 
+  const message = interaction.options.getString("search");
+  console.log("message:", message)
+
   try {
-    await command.execute(interaction);
+    await command.execute(interaction, message);
   } catch (error) {
     log.error(error);
     await interaction
