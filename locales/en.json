@@ -11,7 +11,12 @@
   "commands": {
     "song": {
       "name": "song",
-      "desc": "Play or add a song to the queue."
+      "desc": "Play or add a song to the queue.",
+      "noVoiceChannel": "You must be in a voice channel to request a song!",
+      "noGuild": "Something went wrong.",
+      "errors": {
+        "missingGuild": "Error. Interaction provided no Guild"
+      }
     }
   }
 }
