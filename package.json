@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "deploy-commands": "npm run build && node deploy-commands.js",
     "start": "node dist/index.js",
     "start:dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
