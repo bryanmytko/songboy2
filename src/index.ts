@@ -5,6 +5,7 @@ import { Logger } from "tslog";
 
 import { Command } from "./types";
 import { i18n } from "./i18n.config";
+import { VoiceConnectionStatus } from "@discordjs/voice";
 
 require("dotenv").config();
 const { DISCORD_BOT_TOKEN } = process.env;
@@ -52,11 +53,10 @@ client.on(Events.InteractionCreate, async interaction => {
     return;
   }
 
-  const message = interaction.options.getString("search");
-  console.log("message:", message)
+  const query = interaction.options.getString("search");
 
   try {
-    await command.execute(interaction, message);
+    await command.execute(interaction, query);
   } catch (error) {
     log.error(error);
     await interaction
@@ -64,7 +64,6 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 });
 
-/* TODO does this even exist anymore */
-client.on("disconnected", (): void => {
-  log.info(i18n.__("status.disconnected"));
+client.on(VoiceConnectionStatus.Disconnected, (): void => {
+  log.error(i18n.__("status.disconnected"));
 });
