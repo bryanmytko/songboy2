@@ -1,24 +1,9 @@
 import { joinVoiceChannel } from "@discordjs/voice";
 import { VoiceConnectionStatus } from "@discordjs/voice";
-import { Guild } from "discord.js";
 import { Logger } from "tslog";
+import { SongParams } from "../types";
 
 const log: Logger = new Logger();
-
-enum Source {
-  Random,
-  Reconnect,
-  Request,
-}
-
-interface SongParams {
-  guild: Guild;
-  guildId: string;
-  input: string;
-  message: string;
-  source: Source;
-  voiceChannelId: string;
-}
 
 class Player {
   constructor() {
