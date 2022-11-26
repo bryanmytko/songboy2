@@ -6,15 +6,6 @@ export interface Command {
   cooldown?: number,
 }
 
-export interface SongParams {
-  guild: Guild;
-  guildId: string;
-  message: string;
-  query: string;
-  source: Source;
-  voiceChannelId: string;
-}
-
 declare module "discord.js" {
   export interface Client {
     commands: Collection<string, Command>,
