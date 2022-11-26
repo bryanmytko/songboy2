@@ -1,15 +1,9 @@
-import { joinVoiceChannel } from "@discordjs/voice";
-import { VoiceConnectionStatus } from "@discordjs/voice";
+import { joinVoiceChannel, VoiceConnectionStatus } from "@discordjs/voice";
 import { Logger } from "tslog";
-import { SongParams } from "../types";
+
+import { SongParams } from "../types/player";
 
 const log: Logger = new Logger();
-
-enum Source {
-  Random,
-  Reconnect,
-  Request,
-}
 
 class Player {
   constructor() {
