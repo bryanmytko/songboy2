@@ -14,6 +14,10 @@
       "desc": "Play or add a song to the queue.",
       "noVoiceChannel": "You must be in a voice channel to request a song!",
       "noGuild": "Something went wrong.",
+      "search": {
+        "name": "search",
+        "desc": "Type in the artist and/or song title to search!"
+      },
       "errors": {
         "missingGuild": "Error. Interaction provided no Guild"
       }
