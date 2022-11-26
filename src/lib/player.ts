@@ -5,6 +5,12 @@ import { SongParams } from "../types";
 
 const log: Logger = new Logger();
 
+enum Source {
+  Random,
+  Reconnect,
+  Request,
+}
+
 class Player {
   constructor() {
     log.info("Instantiating Player class.");
