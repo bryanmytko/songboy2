@@ -6,12 +6,6 @@ export interface Command {
   cooldown?: number,
 }
 
-export enum Source {
-  Random,
-  Reconnect,
-  Request,
-}
-
 export interface SongParams {
   guild: Guild;
   guildId: string;

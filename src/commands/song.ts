@@ -3,10 +3,15 @@ import { Logger } from "tslog";
 
 import Player from "../lib/player";
 import { i18n } from "../i18n.config";
-import { Source } from "../types";
 
 const log: Logger = new Logger();
 const player: Player = new Player();
+
+enum Source {
+  Random,
+  Reconnect,
+  Request,
+}
 
 const execute = async (
   interaction: ChatInputCommandInteraction,
