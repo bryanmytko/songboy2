@@ -7,14 +7,21 @@ import { SongParams } from "../types/player";
 const log: Logger = new Logger();
 const songService: SongService = new SongService();
 
+interface SongType {
+  title: string,
+  thumbnail: string
+}
+
 class Player {
   constructor() {
     log.info("Instantiating Player class.");
   }
 
-  async addSong(params: SongParams) {
+  async addSong(params: SongParams): Promise<SongType> {
     const { guild, guildId, voiceChannelId, query } = params;
-    const song = this.searchSong(query);
+    const song = await this.searchSong(query);
+
+    if (!song) throw new Error('Somethign went wrong.');
 
     const connection = joinVoiceChannel({
       channelId: voiceChannelId,
@@ -28,6 +35,8 @@ class Player {
         `The connection has entered the Ready state. ready to play ${song}`
       );
     });
+
+    return song;
   };
 
   async searchSong(query: string) {

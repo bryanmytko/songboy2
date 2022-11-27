@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Logger } from "tslog";
 
 import Player from "../lib/player";
@@ -12,7 +12,7 @@ const execute = async (
   interaction: ChatInputCommandInteraction,
   query: string
 ) => {
-  const { guild } = interaction;
+  const { guild, channelId } = interaction;
   const memberId = interaction.member?.user.id || "";
 
   if (!guild) {
@@ -27,13 +27,7 @@ const execute = async (
     return interaction.reply(i18n.__("commands.song.noVoiceChannel"));
   }
 
-  /* This should instead display the reult of the query.
-     We can accomplish this by either passing interaction and having the
-     reply trigger within `addSong` or use a return value. */
-  await interaction.reply(`Adding ${query} to the playlist`);
-
-  /* TODO placeholder */
-  player.addSong({
+  const song = await player.addSong({
     query,
     message: "", // This will be DJ hook. Might just move this inside Player
     source: Source.Request,
@@ -41,6 +35,16 @@ const execute = async (
     guildId: guild.id,
     guild,
   });
+
+  //await interaction.reply(`Adding ${song.title} to the playlist`);
+
+  /* Testing image in reply. This currently sends a downloadable empty file */
+  const attachment = new AttachmentBuilder(
+    song.thumbnail,
+    { name: "thumbnail" }
+  );
+
+  await interaction.reply({ files: [attachment] });
 };
 
 module.exports = {
