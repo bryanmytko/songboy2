@@ -1,3 +1,4 @@
+import internal from "stream";
 import { Logger } from "tslog";
 import Youtube from "youtube.ts";
 
@@ -10,7 +11,8 @@ interface SongService {
 }
 
 interface SongType {
-  title: string,
+  song: internal.Readable
+  title: string
   thumbnail: string
 }
 
@@ -35,6 +37,7 @@ class SongService {
       .youtube.util.streamMP3(videoId);
 
     return {
+      song: readableStream,
       title: snippet.title || "",
       thumbnail: snippet.thumbnails.high.url || ""
     }

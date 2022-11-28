@@ -1,14 +1,17 @@
-import { joinVoiceChannel, VoiceConnectionStatus } from "@discordjs/voice";
+import { createAudioPlayer, createAudioResource, joinVoiceChannel, VoiceConnectionStatus } from "@discordjs/voice";
+import internal from "stream";
 import { Logger } from "tslog";
-import SongService from "../lib/songService";
 
+import SongService from "../lib/songService";
 import { SongParams } from "../types/player";
 
 const log: Logger = new Logger();
 const songService: SongService = new SongService();
+const audioPlayer = createAudioPlayer();
 
 interface SongType {
-  title: string,
+  song: internal.Readable
+  title: string
   thumbnail: string
 }
 
@@ -29,7 +32,11 @@ class Player {
       adapterCreator: guild.voiceAdapterCreator,
     });
 
-    connection.on(VoiceConnectionStatus.Ready, () => {
+    const resource = createAudioResource(song.song);
+    audioPlayer.play(resource);
+    connection.subscribe(audioPlayer);
+
+    connection.on(VoiceConnectionStatus.Ready, (connection) => {
       /* Placeholder */
       log.info(
         `The connection has entered the Ready state. ready to play ${song}`
