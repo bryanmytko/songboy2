@@ -37,14 +37,9 @@ const execute = async (
   });
 
   //await interaction.reply(`Adding ${song.title} to the playlist`);
+  const file = new AttachmentBuilder(song.thumbnail);
 
-  /* Testing image in reply. This currently sends a downloadable empty file */
-  const attachment = new AttachmentBuilder(
-    song.thumbnail,
-    { name: "thumbnail" }
-  );
-
-  await interaction.reply({ files: [attachment] });
+  await interaction.reply({ content: "hi", files: [file] });
 };
 
 module.exports = {
