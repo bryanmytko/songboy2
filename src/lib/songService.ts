@@ -36,7 +36,7 @@ class SongService {
 
     return {
       title: snippet.title || "",
-      thumbnail: snippet.thumbnails.default.url || ""
+      thumbnail: snippet.thumbnails.high.url || ""
     }
   }
 }
