@@ -1,10 +1,16 @@
 import {
   AudioPlayer,
+  AudioPlayerState,
+  AudioPlayerStatus,
+  AudioResource,
   createAudioPlayer,
   createAudioResource,
+  entersState,
   VoiceConnection,
+  VoiceConnectionState,
+  VoiceConnectionStatus
 } from "@discordjs/voice";
-import { AttachmentBuilder, ChatInputCommandInteraction } from "discord.js";
+import { AttachmentBuilder, TextBasedChannel } from "discord.js";
 import { Logger } from "tslog";
 
 import { i18n } from "../i18n.config";
@@ -21,22 +27,57 @@ interface Song {
 
 class Player {
   public readonly voiceConnection: VoiceConnection;
-  public readonly interaction: ChatInputCommandInteraction;
+  public readonly textChannel: TextBasedChannel;
   public readonly audioPlayer: AudioPlayer;
   public readonly songService: SongService;
   public queue: Song[];
 
-  constructor(
-    voiceConnection: VoiceConnection,
-    interaction: ChatInputCommandInteraction
-  ) {
+  constructor(voiceConnection: VoiceConnection, textChannel: TextBasedChannel) {
     this.voiceConnection = voiceConnection;
-    this.interaction = interaction;
+    this.textChannel = textChannel;
     this.audioPlayer = createAudioPlayer();
     this.songService = new SongService();
     this.queue = [];
 
     voiceConnection.subscribe(this.audioPlayer);
+
+    this.voiceConnection.on(
+      "stateChange",
+      async (oldState: VoiceConnectionState, newState: VoiceConnectionState) => {
+        if (newState.status === "disconnected") {
+
+          log.info("State change from: ", oldState.status, "to: ", newState.status);
+
+          try {
+            await Promise.race([
+              entersState(
+                this.voiceConnection,
+                VoiceConnectionStatus.Signalling,
+                5_000
+              ),
+              entersState(
+                this.voiceConnection,
+                VoiceConnectionStatus.Connecting,
+                5_000
+              ),
+            ]);
+          } catch (error) {
+            voiceConnection.destroy();
+          }
+        }
+      });
+
+    this.audioPlayer.on("stateChange",
+      (oldState: AudioPlayerState, newState: AudioPlayerState) => {
+        if (newState.status === AudioPlayerStatus.Idle &&
+          oldState.status !== AudioPlayerStatus.Idle) {
+          void this.processQueue();
+        }
+      });
+
+    this.audioPlayer.on('error', () => {
+      log.error("Oh noes. Audio player error");
+    });
   }
 
   async addSong(params: SongParams): Promise<Song> {
@@ -66,9 +107,10 @@ class Player {
   }
 
   private async processQueue() {
-    if (this.queue.length === 0) {
-      return this.interaction.reply(i18n.__("commands.song.queueEmpty"));
-    }
+    if (this.queue.length === 0)
+      return this.textChannel.send(i18n.__("commands.song.queueEmpty"));
+
+    if (this.audioPlayer.state.status !== AudioPlayerStatus.Idle) return;
 
     const nextSong = this.queue.shift()!;
     const stream = await this.songService.getReadableStream(nextSong.videoId);
@@ -77,7 +119,7 @@ class Player {
     try {
       const file = new AttachmentBuilder(nextSong.thumbnail);
 
-      await this.interaction.reply({
+      await this.textChannel.send({
         content: i18n.__mf("commands.song.playing", nextSong.title),
         files: [file],
       });
