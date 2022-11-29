@@ -11,7 +11,7 @@ interface SongService {
 }
 
 interface SongType {
-  song: internal.Readable
+  stream: internal.Readable
   title: string
   thumbnail: string
 }
@@ -37,7 +37,7 @@ class SongService {
       .youtube.util.streamMP3(videoId);
 
     return {
-      song: readableStream,
+      stream: readableStream,
       title: snippet.title || "",
       thumbnail: snippet.thumbnails.high.url || ""
     }

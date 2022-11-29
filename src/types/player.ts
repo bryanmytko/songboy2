@@ -7,10 +7,10 @@ export enum Source {
 };
 
 export interface SongParams {
-  guild: Guild;
-  guildId: string;
+  // guild: Guild;
+  // guildId: string;
   message: string;
   query: string;
   source: Source;
-  voiceChannelId: string;
+  // voiceChannelId: string;
 };
