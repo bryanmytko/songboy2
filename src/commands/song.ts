@@ -1,5 +1,4 @@
 import {
-  AttachmentBuilder,
   ChatInputCommandInteraction,
   GuildMember,
   SlashCommandBuilder,
@@ -19,8 +18,9 @@ const execute = async (
   interaction: ChatInputCommandInteraction,
   query: string
 ) => {
-  const { guildId } = interaction;
+  const { channel: textChannel, guildId } = interaction;
   if (!guildId) return log.error("No guildID found!");
+  if (!textChannel) return log.error("No text channel found!");
 
   let player = players.get(guildId);
 
@@ -33,7 +33,7 @@ const execute = async (
         channelId: channel.id,
         guildId: channel.guild.id,
         adapterCreator: channel.guild.voiceAdapterCreator,
-      }), interaction);
+      }), textChannel);
 
       player.voiceConnection.on("error", console.warn);
       players.set(guildId, player);
@@ -41,12 +41,17 @@ const execute = async (
   }
 
   if (!player) return interaction
-    .followUp(i18n.__("commands.song.noVoiceChannel"));
+    .reply(i18n.__("commands.song.noVoiceChannel"));
 
   const song = await player.addSong({
     message: "", // This is for DJ lead
     query,
     source: Source.Request,
+  });
+
+  interaction.reply({
+    content: i18n.__mf("commands.song.added", song.title),
+    ephemeral: true
   });
 
   player.addToQueue(song);
