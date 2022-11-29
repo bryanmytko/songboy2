@@ -7,13 +7,13 @@ const log: Logger = new Logger();
 const { GOOGLE_API_KEY } = process.env;
 
 interface SongService {
-  youtube: Youtube
+  youtube: Youtube;
 }
 
 interface SongType {
-  stream: internal.Readable
-  title: string
-  thumbnail: string
+  videoId: string;
+  title: string;
+  thumbnail: string;
 }
 
 class SongService {
@@ -21,26 +21,29 @@ class SongService {
     try {
       this.youtube = new Youtube(GOOGLE_API_KEY);
     } catch (e) {
-      log.error('Invalid or missing YouTube API key!')
+      log.error("Invalid or missing YouTube API key!");
     }
   }
 
   async searchVideos(query: string): Promise<SongType> {
-    const videoSearch = await this
-      .youtube.videos.search({ q: query, maxResults: 1 });
+    const videoSearch = await this.youtube.videos.search({
+      q: query,
+      maxResults: 1,
+    });
 
     const result = videoSearch.items[0];
     const { snippet } = result;
     const { videoId } = result.id;
 
-    const readableStream = await this
-      .youtube.util.streamMP3(videoId);
-
     return {
-      stream: readableStream,
+      videoId,
       title: snippet.title || "",
-      thumbnail: snippet.thumbnails.high.url || ""
-    }
+      thumbnail: snippet.thumbnails.high.url || "",
+    };
+  }
+
+  async getReadableStream(videoId: string): Promise<internal.Readable> {
+    return this.youtube.util.streamMP3(videoId);
   }
 }
 
