@@ -10,6 +10,7 @@
   },
   "commands": {
     "song": {
+      "added": "Added your song \"%s\" to the queue!",
       "desc": "Play or add a song to the queue.",
       "name": "song",
       "noGuild": "Something went wrong.",
