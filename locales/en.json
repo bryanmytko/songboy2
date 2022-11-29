@@ -16,7 +16,7 @@
       "noGuild": "Something went wrong.",
       "noVoiceChannel": "You must be in a voice channel to request a song!",
       "playing": "Song Boy is playing \"%s\"",
-      "queueEmpty": "Queue is empty. Song Boy is out of music :sad:",
+      "queueEmpty": "Queue is empty. Song Boy is out of music :cry:",
       "search": {
         "desc": "Type in the artist and/or song title to search!",
         "name": "search"
