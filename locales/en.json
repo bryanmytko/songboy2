@@ -4,19 +4,21 @@
     "disconnected": "Songboy has disconnected."
   },
   "command": {
-    "missingProperty": "[WARNING] The command at '%s' is missing a required \"data\" or \"execute\" property.",
+    "error": "There was an error while executing this command!",
     "missing": "No command matching '%s' was found.",
-    "error": "There was an error while executing this command!"
+    "missingProperty": "[WARNING] The command at '%s' is missing a required \"data\" or \"execute\" property."
   },
   "commands": {
     "song": {
-      "name": "song",
       "desc": "Play or add a song to the queue.",
-      "noVoiceChannel": "You must be in a voice channel to request a song!",
+      "name": "song",
       "noGuild": "Something went wrong.",
+      "noVoiceChannel": "You must be in a voice channel to request a song!",
+      "playing": "Song Boy is playing \"%s\"",
+      "queueEmpty": "Queue is empty. Song Boy is out of music :sad:",
       "search": {
-        "name": "search",
-        "desc": "Type in the artist and/or song title to search!"
+        "desc": "Type in the artist and/or song title to search!",
+        "name": "search"
       }
     }
   }
