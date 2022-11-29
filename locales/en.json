@@ -17,9 +17,6 @@
       "search": {
         "name": "search",
         "desc": "Type in the artist and/or song title to search!"
-      },
-      "errors": {
-        "missingGuild": "Error. Interaction provided no Guild"
       }
     }
   }
