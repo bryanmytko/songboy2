@@ -9,6 +9,12 @@
     "missingProperty": "[WARNING] The command at '%s' is missing a required \"data\" or \"execute\" property."
   },
   "commands": {
+    "queue": {
+      "desc": "See the current queue.",
+      "name": "queue",
+      "reply": "Current queue:",
+      "empty": "There are no songs currently in queue."
+    },
     "song": {
       "added": "Added your song \"%s\" to the queue!",
       "desc": "Play or add a song to the queue.",
