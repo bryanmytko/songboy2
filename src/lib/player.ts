@@ -2,13 +2,12 @@ import {
   AudioPlayer,
   AudioPlayerState,
   AudioPlayerStatus,
-  AudioResource,
   createAudioPlayer,
   createAudioResource,
   entersState,
   VoiceConnection,
   VoiceConnectionState,
-  VoiceConnectionStatus
+  VoiceConnectionStatus,
 } from "@discordjs/voice";
 import { AttachmentBuilder, TextBasedChannel } from "discord.js";
 import { Logger } from "tslog";
@@ -43,11 +42,8 @@ class Player {
 
     this.voiceConnection.on(
       "stateChange",
-      async (oldState: VoiceConnectionState, newState: VoiceConnectionState) => {
+      async (_: VoiceConnectionState, newState: VoiceConnectionState) => {
         if (newState.status === "disconnected") {
-
-          log.info("State change from: ", oldState.status, "to: ", newState.status);
-
           try {
             await Promise.race([
               entersState(
@@ -65,17 +61,22 @@ class Player {
             voiceConnection.destroy();
           }
         }
-      });
+      }
+    );
 
-    this.audioPlayer.on("stateChange",
+    this.audioPlayer.on(
+      "stateChange",
       (oldState: AudioPlayerState, newState: AudioPlayerState) => {
-        if (newState.status === AudioPlayerStatus.Idle &&
-          oldState.status !== AudioPlayerStatus.Idle) {
+        if (
+          newState.status === AudioPlayerStatus.Idle &&
+          oldState.status !== AudioPlayerStatus.Idle
+        ) {
           void this.processQueue();
         }
-      });
+      }
+    );
 
-    this.audioPlayer.on('error', () => {
+    this.audioPlayer.on("error", () => {
       log.error("Oh noes. Audio player error");
     });
   }
@@ -98,12 +99,16 @@ class Player {
 
   public addToQueue(song: Song) {
     this.queue.push(song);
-    void this.processQueue();
+    this.processQueue();
   }
 
   public stop() {
     this.queue = [];
     this.audioPlayer.stop(true);
+  }
+
+  public viewQueue() {
+    return this.queue;
   }
 
   private async processQueue() {
