@@ -15,10 +15,7 @@ const execute = async (
     source: Source.Request,
   });
 
-  interaction.reply({
-    content: i18n.__mf("commands.song.added", song.title),
-    ephemeral: true,
-  });
+  interaction.reply(i18n.__mf("commands.song.added", song.title));
 
   player.addToQueue(song);
 };
