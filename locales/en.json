@@ -15,6 +15,12 @@
       "reply": "Current queue:",
       "empty": "There are no songs currently in queue."
     },
+    "skip": {
+      "desc": "Skip the current song.",
+      "empty": "There is nothing to skip, the queue is empty!",
+      "name": "skip",
+      "reply": "Skipped \"%s\"."
+    },
     "song": {
       "added": "Added your song \"%s\" to the queue!",
       "desc": "Play or add a song to the queue.",
