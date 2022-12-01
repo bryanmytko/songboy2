@@ -33,6 +33,11 @@
         "desc": "Type in the artist and/or song title to search!",
         "name": "search"
       }
+    },
+    "stop": {
+      "desc": "Stop Songboy and wipe the playlist.",
+      "name": "stop",
+      "reply": ":skull: Songboy has stopped."
     }
   }
 }

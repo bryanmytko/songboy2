@@ -116,6 +116,7 @@ class Player {
   }
 
   public stop() {
+    this.currentSong = null;
     this.queue = [];
     this.audioPlayer.stop(true);
   }
