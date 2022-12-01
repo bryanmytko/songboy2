@@ -29,6 +29,7 @@ class Player {
   public readonly textChannel: TextBasedChannel;
   public readonly audioPlayer: AudioPlayer;
   public readonly songService: SongService;
+  public currentSong: Song | null | undefined;
   public queue: Song[];
 
   constructor(voiceConnection: VoiceConnection, textChannel: TextBasedChannel) {
@@ -36,6 +37,7 @@ class Player {
     this.textChannel = textChannel;
     this.audioPlayer = createAudioPlayer();
     this.songService = new SongService();
+    this.currentSong;
     this.queue = [];
 
     voiceConnection.subscribe(this.audioPlayer);
@@ -102,6 +104,17 @@ class Player {
     this.processQueue();
   }
 
+  public skip() {
+    const skipped = this.currentSong;
+
+    if (this.currentSong) {
+      this.audioPlayer.state.status = AudioPlayerStatus.Idle;
+      this.processQueue();
+    }
+
+    return skipped;
+  }
+
   public stop() {
     this.queue = [];
     this.audioPlayer.stop(true);
@@ -112,20 +125,23 @@ class Player {
   }
 
   private async processQueue() {
-    if (this.queue.length === 0)
+    if (this.queue.length === 0) {
+      this.currentSong = null;
       return this.textChannel.send(i18n.__("commands.song.queueEmpty"));
+    }
 
     if (this.audioPlayer.state.status !== AudioPlayerStatus.Idle) return;
 
-    const nextSong = this.queue.shift()!;
-    const stream = await this.songService.getReadableStream(nextSong.videoId);
+    this.currentSong = this.queue.shift()!;
+    const stream = await this.songService
+      .getReadableStream(this.currentSong.videoId);
     const resource = createAudioResource(stream);
 
     try {
-      const file = new AttachmentBuilder(nextSong.thumbnail);
+      const file = new AttachmentBuilder(this.currentSong.thumbnail);
 
       await this.textChannel.send({
-        content: i18n.__mf("commands.song.playing", nextSong.title),
+        content: i18n.__mf("commands.song.playing", this.currentSong.title),
         files: [file],
       });
       this.audioPlayer.play(resource);
