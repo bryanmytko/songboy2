@@ -34,8 +34,8 @@ class SongService {
         thumbnail: snippet.thumbnails.high.url || "",
       };
     } catch (e: any) {
-      log.error(e.message);
-      throw new Error();
+      log.error(e.status);
+      throw new Error("API error. Check rate limit.");
     }
   }
 

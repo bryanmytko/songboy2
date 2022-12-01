@@ -9,6 +9,8 @@ const execute = async (
   player: Player
 ) => {
   const queue = player.viewQueue();
+  if (!queue.length) return interaction.reply(i18n.__("commands.queue.empty"));
+
   const songs = queue.map((song, index) => `${index + 1}. ${song.title}`);
 
   interaction.reply(`${i18n.__("commands.queue.reply")} \n${songs.join("\n")}`);
