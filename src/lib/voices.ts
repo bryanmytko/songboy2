@@ -44,4 +44,6 @@ const VOICES = [
   { languageCode: "en-US", name: "en-US-Wavenet-I", ssmGender: "MALE" },
 ];
 
-export { VOICES };
+const randomVoice = () => VOICES[Math.floor(Math.random() * VOICES.length)];
+
+export { randomVoice };
