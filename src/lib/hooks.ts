@@ -2,6 +2,7 @@ import textToSpeech from "@google-cloud/text-to-speech";
 import { google } from "@google-cloud/text-to-speech/build/protos/protos";
 import { Readable } from "stream";
 import { Song } from "../types/player";
+import { VOICES } from "./voices";
 
 const client = new textToSpeech.TextToSpeechClient();
 
@@ -10,8 +11,8 @@ const getHook = async (song: Song) => {
 
   return synthesizedSpeechStream({
     input: { text: testLead },
-    voice: { languageCode: 'en-US', ssmlGender: 'NEUTRAL' },
-    audioConfig: { audioEncoding: "MP3", speakingRate: 1.0 }
+    voice: randomVoice(),
+    audioConfig: { audioEncoding: "MP3", speakingRate: 1.0 },
   });
 };
 
@@ -25,5 +26,7 @@ const synthesizedSpeechStream = async (
 
   return stream;
 };
+
+const randomVoice = () => VOICES[Math.floor(Math.random() * VOICES.length)];
 
 export { getHook };
