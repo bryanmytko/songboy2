@@ -2,7 +2,7 @@ import internal from "stream";
 import { Logger } from "tslog";
 import Youtube from "youtube.ts";
 
-interface SongType {
+interface SearchResult {
   videoId: string;
   title: string;
   thumbnail: string;
@@ -17,7 +17,7 @@ class SongService {
     this.youtube = new Youtube(GOOGLE_API_KEY);
   }
 
-  async searchVideos(query: string): Promise<SongType> {
+  async searchVideos(query: string): Promise<SearchResult> {
     try {
       const videoSearch = await this.youtube.videos.search({
         q: query,
