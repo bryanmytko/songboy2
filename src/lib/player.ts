@@ -80,16 +80,11 @@ class Player {
   }
 
   async addSong(params: SongParams): Promise<Song> {
-    /* This will also eventually handle:
-        - DJ hook
-        - DB logging
-        - Reconnect logic
-    */
-
-    const { query } = params;
+    const { requester, query } = params;
 
     try {
-      return this.songService.searchVideos(query);
+      const result = await this.songService.searchVideos(query);
+      return { ...result, requester };
     } catch {
       throw new Error("Something went wrong. Could not add song.");
     }
@@ -149,8 +144,9 @@ class Player {
            Maybe a way to do this with previous/new states */
         if (!this.currentSong) return;
 
-        const stream = await this.songService
-          .getReadableStream(this.currentSong.videoId);
+        const stream = await this.songService.getReadableStream(
+          this.currentSong.videoId
+        );
         const resource = createAudioResource(stream);
 
         this.audioPlayer.play(resource);
