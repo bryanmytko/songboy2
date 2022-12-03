@@ -1,4 +1,4 @@
-const LEADS = (song: string, name: string) => [
+const generateLeads = (song: string, name: string) => [
   `This one goes out to ${name}. Here's ${song}`,
   `${name} has requested ${song}, so let's take that one for a spin.`,
   `Can we get some poggers in the chat for ${song}`,
@@ -32,7 +32,9 @@ const LEADS = (song: string, name: string) => [
 ];
 
 const randomLead = (song: string, name: string) => {
-  return LEADS(song, name)[Math.floor(Math.random() * LEADS.length)];
+  const LEADS = generateLeads(song, name);
+
+  return LEADS[Math.floor(Math.random() * LEADS.length)];
 };
 
 export { randomLead };
