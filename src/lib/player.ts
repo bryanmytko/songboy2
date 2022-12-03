@@ -26,6 +26,7 @@ class Player {
   public readonly songService: SongService;
   public currentSong: Song | null | undefined;
   public queue: Song[];
+  public inProcess: boolean;
 
   constructor(voiceConnection: VoiceConnection, textChannel: TextBasedChannel) {
     this.voiceConnection = voiceConnection;
@@ -34,6 +35,7 @@ class Player {
     this.songService = new SongService();
     this.currentSong;
     this.queue = [];
+    this.inProcess = false;
 
     voiceConnection.subscribe(this.audioPlayer);
 
@@ -61,18 +63,18 @@ class Player {
       }
     );
 
-    // this.audioPlayer.on(
-    //   "stateChange",
-    //   (oldState: AudioPlayerState, newState: AudioPlayerState) => {
-    //     console.log("oldState:", oldState.status, " AND newState: ", newState.status)
-    //     if (
-    //       newState.status === AudioPlayerStatus.Idle &&
-    //       oldState.status !== AudioPlayerStatus.Idle
-    //     ) {
-    //       void this.processQueue();
-    //     }
-    //   }
-    // );
+    this.audioPlayer.on(
+      "stateChange",
+      (oldState: AudioPlayerState, newState: AudioPlayerState) => {
+        if (
+          newState.status === AudioPlayerStatus.Idle &&
+          oldState.status !== AudioPlayerStatus.Idle &&
+          !this.inProcess
+        ) {
+          void this.processQueue();
+        }
+      }
+    );
 
     this.audioPlayer.on("error", () => {
       log.error("Oh noes. Audio player error");
@@ -135,13 +137,10 @@ class Player {
     const hookResource = createAudioResource(hook);
 
     try {
-      // @TODO need to fix the timing so these wait for each other.
       this.audioPlayer.play(hookResource);
+      this.inProcess = true;
 
-      // This introduces a bug because it reads the constructor's state change
       this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
-        /* This endless loops the current song.
-           Maybe a way to do this with previous/new states */
         if (!this.currentSong) return;
 
         const stream = await this.songService.getReadableStream(
@@ -150,6 +149,7 @@ class Player {
         const resource = createAudioResource(stream);
 
         this.audioPlayer.play(resource);
+        this.inProcess = false;
       });
     } catch (error) {
       this.processQueue();
