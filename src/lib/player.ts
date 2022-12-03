@@ -14,15 +14,10 @@ import { Logger } from "tslog";
 
 import { i18n } from "../i18n.config";
 import SongService from "../lib/songService";
-import { SongParams } from "../types/player";
+import { getHook } from "../lib/hooks";
+import { Song, SongParams } from "../types/player";
 
 const log: Logger = new Logger();
-
-interface Song {
-  videoId: string;
-  title: string;
-  thumbnail: string;
-}
 
 class Player {
   public readonly voiceConnection: VoiceConnection;
@@ -31,6 +26,7 @@ class Player {
   public readonly songService: SongService;
   public currentSong: Song | null | undefined;
   public queue: Song[];
+  public inProcess: boolean;
 
   constructor(voiceConnection: VoiceConnection, textChannel: TextBasedChannel) {
     this.voiceConnection = voiceConnection;
@@ -39,6 +35,7 @@ class Player {
     this.songService = new SongService();
     this.currentSong;
     this.queue = [];
+    this.inProcess = false;
 
     voiceConnection.subscribe(this.audioPlayer);
 
@@ -71,7 +68,8 @@ class Player {
       (oldState: AudioPlayerState, newState: AudioPlayerState) => {
         if (
           newState.status === AudioPlayerStatus.Idle &&
-          oldState.status !== AudioPlayerStatus.Idle
+          oldState.status !== AudioPlayerStatus.Idle &&
+          !this.inProcess
         ) {
           void this.processQueue();
         }
@@ -84,16 +82,11 @@ class Player {
   }
 
   async addSong(params: SongParams): Promise<Song> {
-    /* This will also eventually handle:
-        - DJ hook
-        - DB logging
-        - Reconnect logic
-    */
-
-    const { query } = params;
+    const { requester, query } = params;
 
     try {
-      return this.songService.searchVideos(query);
+      const result = await this.songService.searchVideos(query);
+      return { ...result, requester };
     } catch {
       throw new Error("Something went wrong. Could not add song.");
     }
@@ -134,18 +127,30 @@ class Player {
     if (this.audioPlayer.state.status !== AudioPlayerStatus.Idle) return;
 
     this.currentSong = this.queue.shift()!;
-    const stream = await this.songService
-      .getReadableStream(this.currentSong.videoId);
-    const resource = createAudioResource(stream);
+    const file = new AttachmentBuilder(this.currentSong.thumbnail);
+    await this.textChannel.send({
+      content: i18n.__mf("commands.song.playing", this.currentSong.title),
+      files: [file],
+    });
+
+    const hook = await getHook(this.currentSong);
+    const hookResource = createAudioResource(hook);
 
     try {
-      const file = new AttachmentBuilder(this.currentSong.thumbnail);
+      this.audioPlayer.play(hookResource);
+      this.inProcess = true;
 
-      await this.textChannel.send({
-        content: i18n.__mf("commands.song.playing", this.currentSong.title),
-        files: [file],
+      this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
+        if (!this.currentSong) return;
+
+        const stream = await this.songService.getReadableStream(
+          this.currentSong.videoId
+        );
+        const resource = createAudioResource(stream);
+
+        this.audioPlayer.play(resource);
+        this.inProcess = false;
       });
-      this.audioPlayer.play(resource);
     } catch (error) {
       this.processQueue();
     }

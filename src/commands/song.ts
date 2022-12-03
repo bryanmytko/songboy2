@@ -9,8 +9,10 @@ const execute = async (
   query: string,
   player: Player
 ) => {
+  const { username } = interaction.user;
+
   const song = await player.addSong({
-    message: "", // This is for DJ lead
+    requester: username,
     query,
     source: Source.Request,
   });
