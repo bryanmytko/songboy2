@@ -7,6 +7,7 @@ import {
   Snowflake,
 } from "discord.js";
 import { joinVoiceChannel, VoiceConnectionStatus } from "@discordjs/voice";
+import mongoose from "mongoose";
 import path from "path";
 import fs from "fs";
 import { Logger } from "tslog";
@@ -14,10 +15,13 @@ import { Logger } from "tslog";
 import { Command } from "./types";
 import { i18n } from "./i18n.config";
 import Player from "./lib/player";
-import { Source } from "./types/player";
 
 require("dotenv").config();
-const { DISCORD_BOT_TOKEN } = process.env;
+const { DISCORD_BOT_TOKEN, MONGO_URL } = process.env;
+
+mongoose.connect(MONGO_URL || "");
+const db = mongoose.connection;
+db.once("open", () => log.info("Database connected."));
 
 const log: Logger = new Logger();
 const players = new Map<Snowflake, Player>();
