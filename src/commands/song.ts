@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 import Player from "../lib/player";
+import { saveSongHistory } from "../lib/history";
 import { i18n } from "../i18n.config";
 import { Source } from "../types/player";
 
@@ -18,8 +19,8 @@ const execute = async (
   });
 
   interaction.reply(i18n.__mf("commands.song.added", song.title));
-
   player.addToQueue(song);
+  saveSongHistory(song);
 };
 
 module.exports = {
