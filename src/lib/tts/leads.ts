@@ -29,6 +29,9 @@ const generateLeads = (song: string, name: string) => [
   `Here's ${song}. Enjoy your music, Boomer.`,
   "Meredith, I’m worried that the baby thinks people can’t change...",
   `Sup y'all, it's me, it's ya boy ${name}.`,
+  `Hi, I'm Songboy and I'm being forced to play ${song}`,
+  `Snap your fingers and your spaghetti noodles to this hit. Here's ${song}`,
+  "This one goes out to Fippy Fappy. Rest in peace.",
 ];
 
 const randomLead = (song: string, name: string) => {
