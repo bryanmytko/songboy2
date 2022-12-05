@@ -13,12 +13,16 @@ const schema = new Schema({
     type: String,
     required: true,
   },
+  thumbnail: {
+    type: String,
+    required: true,
+  },
   date: {
     type: Date,
     required: true,
   },
 });
 
-const song = model("Song", schema);
+const Song = model("Song", schema);
 
-export { song };
+export { Song };
