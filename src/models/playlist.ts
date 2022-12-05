@@ -27,6 +27,6 @@ const schema = new Schema({
   },
 });
 
-const playlist = model("Playlist", schema);
+const Playlist = model("Playlist", schema);
 
-export { playlist };
+export { Playlist };
