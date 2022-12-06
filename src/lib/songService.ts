@@ -1,6 +1,7 @@
 import internal from "stream";
 import { Logger } from "tslog";
 import Youtube from "youtube.ts";
+import { exec as ytdlexec } from "youtube-dl-exec";
 
 interface SearchResult {
   videoId: string;
@@ -39,8 +40,23 @@ class SongService {
     }
   }
 
-  async getReadableStream(videoId: string): Promise<internal.Readable> {
-    return this.youtube.util.streamMP3(videoId);
+  getReadableStream(videoId: string): internal.Readable {
+    // return this.youtube.util.streamMP3(videoId);
+    const stream = ytdlexec(
+      `https://www.youtube.com/watch?v=${videoId}`,
+      {
+        output: "-",
+        format:
+          "bestaudio[ext=webm+acodec=opus+tbr>100]/bestaudio[ext=webm+acodec=opus]/bestaudio/best",
+        limitRate: "1M",
+        rmCacheDir: true,
+        verbose: true,
+      },
+      { stdio: ["ignore", "pipe", "ignore"] }
+    );
+    console.log(stream)
+
+    return stream.stdout!;
   }
 }
 
