@@ -149,6 +149,10 @@ class Player {
         const resource = createAudioResource(stream);
 
         this.audioPlayer.play(resource);
+        this.audioPlayer.on("error", (_: any) => {
+          console.error(`Error playing ${this.currentSong}`);
+        });
+
         this.inProcess = false;
       });
     } catch (error) {
