@@ -1,6 +1,7 @@
-import internal from "stream";
 import { Logger } from "tslog";
 import Youtube from "youtube.ts";
+import { exec as ytdlexec } from "youtube-dl-exec";
+import { Readable } from "stream";
 
 interface SearchResult {
   videoId: string;
@@ -9,6 +10,10 @@ interface SearchResult {
 }
 
 const log: Logger = new Logger();
+
+const YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+const youtubeRE =
+  /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
 
 class SongService {
   public readonly youtube: Youtube;
@@ -39,8 +44,31 @@ class SongService {
     }
   }
 
-  async getReadableStream(videoId: string): Promise<internal.Readable> {
-    return this.youtube.util.streamMP3(videoId);
+  getReadableStream(videoId: string): Readable {
+    const stream = ytdlexec(
+      this.parseUrl(videoId),
+      {
+        output: "-",
+        format: "bestaudio",
+        limitRate: "1M",
+        rmCacheDir: true,
+        verbose: true,
+      },
+      { stdio: ["ignore", "pipe", "pipe"] }
+    );
+
+    stream.on("error", (err: any) => {
+      stream.kill("SIGTERM");
+      console.log("ERROR", "Spawn failed!", err);
+    });
+
+    stream.unref();
+
+    return stream.stdout!;
+  }
+
+  parseUrl(url: string): string {
+    return url.match(youtubeRE) ? url : `${YOUTUBE_URL}${url}`;
   }
 }
 

@@ -143,12 +143,16 @@ class Player {
       this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
         if (!this.currentSong) return;
 
-        const stream = await this.songService.getReadableStream(
+        const stream = this.songService.getReadableStream(
           this.currentSong.videoId
         );
         const resource = createAudioResource(stream);
 
         this.audioPlayer.play(resource);
+        this.audioPlayer.on("error", (_: any) => {
+          console.error(`Error playing ${this.currentSong}`);
+        });
+
         this.inProcess = false;
       });
     } catch (error) {
