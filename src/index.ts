@@ -92,6 +92,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   try {
     await command.execute(interaction, query, player);
   } catch (error) {
+    log.error(error);
     await interaction.reply({
       content: i18n.__("command.error"),
       ephemeral: true,
