@@ -1,4 +1,4 @@
-# Songboy
+# Songboy2
 
 ### Invite bot to server
 
