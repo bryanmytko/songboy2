@@ -36,6 +36,7 @@ const commandFiles = fs
   .readdirSync(commandsPath)
   .filter((file: any) => file.endsWith(".js"));
 
+
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   const command = require(filePath);
@@ -92,7 +93,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
   try {
     await command.execute(interaction, query, player);
   } catch (error) {
-    log.error(error);
     await interaction.reply({
       content: i18n.__("command.error"),
       ephemeral: true,
