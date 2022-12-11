@@ -143,7 +143,7 @@ class Player {
       this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
         if (!this.currentSong) return;
 
-        const stream = this.songService.getReadableStream(
+        const stream = await this.songService.getReadableStream(
           this.currentSong.videoId
         );
         const resource = createAudioResource(stream);
