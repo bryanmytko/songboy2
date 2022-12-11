@@ -10,7 +10,9 @@ const execute = async (
   query: string,
   player: Player
 ) => {
+  console.log("song command...!");
   const { username } = interaction.user;
+  console.log("username:", username);
 
   const song = await player.addSong({
     requester: username,

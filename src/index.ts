@@ -36,10 +36,13 @@ const commandFiles = fs
   .readdirSync(commandsPath)
   .filter((file: any) => file.endsWith(".ts"));
 
+console.log("COMMANDS:", commandFiles);
+
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   const command = require(filePath);
-  console.log(command);
+
+  console.log("COMMAND:", command);
 
   if ("data" in command && "execute" in command) {
     client.commands.set(command.data.name, command);
