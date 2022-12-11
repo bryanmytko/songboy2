@@ -1,6 +1,5 @@
 import { Logger } from "tslog";
 import Youtube from "youtube.ts";
-import { exec as ytdlexec } from "youtube-dl-exec";
 import { Readable } from "stream";
 
 interface SearchResult {
@@ -44,27 +43,8 @@ class SongService {
     }
   }
 
-  getReadableStream(videoId: string): Readable {
-    const stream = ytdlexec(
-      this.parseUrl(videoId),
-      {
-        output: "-",
-        format: "bestaudio",
-        limitRate: "1M",
-        rmCacheDir: true,
-        verbose: true,
-      },
-      { stdio: ["ignore", "pipe", "pipe"] }
-    );
-
-    stream.on("error", (err: any) => {
-      stream.kill("SIGTERM");
-      console.log("ERROR", "Spawn failed!", err);
-    });
-
-    stream.unref();
-
-    return stream.stdout!;
+  getReadableStream(videoId: string): Promise<Readable> {
+    return this.youtube.util.streamMP3(videoId);
   }
 
   parseUrl(url: string): string {
