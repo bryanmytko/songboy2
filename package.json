@@ -4,6 +4,10 @@
   "description": "Songboy 2.0",
   "main": "dist/index.js",
   "scripts": {
+    "dokku": {
+      "predeploy": "echo ${GOOGLE_CREDENTIALS} > /app/google-credentials.json",
+      "postdeploy": "echo ${GOOGLE_CREDENTIALS} > /app/google-credentials.json"
+    },
     "build": "tsc",
     "deploy-commands": "npm run build && node deploy-commands.js",
     "start": "NODE_ENV=production node dist/index.js",
