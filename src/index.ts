@@ -32,9 +32,17 @@ const client = new Client({
 client.commands = new Collection<string, Command>();
 
 const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs
-  .readdirSync(commandsPath)
-  .filter((file: any) => file.endsWith(".js"));
+let commandFiles;
+
+if (process.env.NODE_ENV === "production") {
+  commandFiles = fs
+    .readdirSync(commandsPath)
+    .filter((file: any) => file.endsWith(".js"));
+} else {
+  commandFiles = fs
+    .readdirSync(commandsPath)
+    .filter((file: any) => file.endsWith(".ts"));
+}
 
 client.on("unhandledRejection", (e: any) => {
   log.error("Unhandled promise rejection:", e);
