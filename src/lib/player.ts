@@ -76,8 +76,9 @@ class Player {
       }
     );
 
-    this.audioPlayer.on("error", () => {
+    this.audioPlayer.on("error", (e: any) => {
       log.error("Oh noes. Audio player error");
+      log.error(e);
     });
   }
 
@@ -112,6 +113,7 @@ class Player {
     this.currentSong = null;
     this.queue = [];
     this.audioPlayer.stop(true);
+    this.voiceConnection.disconnect();
   }
 
   public viewQueue() {
@@ -121,6 +123,9 @@ class Player {
   private async processQueue() {
     if (this.queue.length === 0) {
       this.currentSong = null;
+      this.audioPlayer.stop(true);
+      this.voiceConnection.disconnect();
+
       return this.textChannel.send(i18n.__("commands.song.queueEmpty"));
     }
 
@@ -149,14 +154,24 @@ class Player {
         const resource = createAudioResource(stream);
 
         this.audioPlayer.play(resource);
+        log.info("Playing: ", this.currentSong?.title);
+
         this.audioPlayer.on("error", (e: any) => {
-          log.error(`Error playing ${this.currentSong}`);
+          log.error(`Error playing ${this.currentSong?.title}`);
           log.error(e);
         });
 
         this.inProcess = false;
       });
-    } catch (error) {
+
+      log.debug(
+        `LISTENER COUNT: ${this.audioPlayer.listenerCount(
+          AudioPlayerStatus.Idle
+        )}`
+      );
+    } catch (e: any) {
+      log.error("Caught error playing song. Processing queue...");
+      log.error(e);
       this.processQueue();
     }
   }

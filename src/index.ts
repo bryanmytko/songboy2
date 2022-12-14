@@ -36,6 +36,9 @@ const commandFiles = fs
   .readdirSync(commandsPath)
   .filter((file: any) => file.endsWith(".js"));
 
+client.on("unhandledRejection", (e: any) => {
+  log.error("Unhandled promise rejection:", e);
+});
 
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
