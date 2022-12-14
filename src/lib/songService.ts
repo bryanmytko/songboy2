@@ -9,7 +9,9 @@ interface SearchResult {
 }
 
 const log: Logger = new Logger();
+require("dotenv").config();
 
+const { GOOGLE_API_KEY } = process.env;
 const YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 const youtubeRE =
   /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
@@ -17,7 +19,6 @@ const youtubeRE =
 class SongService {
   public readonly youtube: Youtube;
   constructor() {
-    const { GOOGLE_API_KEY } = process.env;
     this.youtube = new Youtube(GOOGLE_API_KEY);
   }
 
@@ -38,8 +39,8 @@ class SongService {
         thumbnail: snippet.thumbnails.high.url || "",
       };
     } catch (e: any) {
-      log.error(e.status);
-      throw new Error("API error. Check rate limit.");
+      log.error(e);
+      throw new Error(e);
     }
   }
 
@@ -52,4 +53,4 @@ class SongService {
   }
 }
 
-export default SongService;
+export const songService = new SongService();
