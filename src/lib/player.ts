@@ -13,9 +13,9 @@ import { AttachmentBuilder, TextBasedChannel } from "discord.js";
 import { Logger } from "tslog";
 
 import { i18n } from "../i18n.config";
-import SongService from "../lib/songService";
+import { songService } from "../lib/songService";
 import { getHook } from "../lib/hooks";
-import { Song, SongParams } from "../types/player";
+import { Song } from "../types/player";
 
 const log: Logger = new Logger();
 
@@ -23,7 +23,6 @@ class Player {
   public readonly voiceConnection: VoiceConnection;
   public readonly textChannel: TextBasedChannel;
   public readonly audioPlayer: AudioPlayer;
-  public readonly songService: SongService;
   public currentSong: Song | null | undefined;
   public queue: Song[];
   public inProcess: boolean;
@@ -32,7 +31,6 @@ class Player {
     this.voiceConnection = voiceConnection;
     this.textChannel = textChannel;
     this.audioPlayer = createAudioPlayer();
-    this.songService = new SongService();
     this.currentSong;
     this.queue = [];
     this.inProcess = false;
@@ -56,8 +54,9 @@ class Player {
                 5_000
               ),
             ]);
-          } catch (error) {
-            voiceConnection.destroy();
+          } catch (e: any) {
+            log.error("VoiceConnection error", e?.message)
+            voiceConnection.disconnect();
           }
         }
       }
@@ -70,41 +69,28 @@ class Player {
           newState.status === AudioPlayerStatus.Idle &&
           oldState.status !== AudioPlayerStatus.Idle &&
           !this.inProcess
-        ) {
-          void this.processQueue();
-        }
+        ) return this.processQueue();
+
+        if (
+          newState.status === AudioPlayerStatus.Idle &&
+          oldState.status !== AudioPlayerStatus.Idle
+        ) return this.playNextSong();
       }
     );
-
-    this.audioPlayer.on("error", (e: any) => {
-      log.error("Oh noes. Audio player error");
-      log.error(e);
-    });
   }
 
-  async addSong(params: SongParams): Promise<Song> {
-    const { requester, query } = params;
-
-    try {
-      const result = await this.songService.searchVideos(query);
-      return { ...result, requester };
-    } catch {
-      throw new Error("Something went wrong. Could not add song.");
-    }
-  }
-
-  public addToQueue(song: Song) {
+  public async play(song: Song) {
     this.queue.push(song);
-    this.processQueue();
+
+    if (this.audioPlayer.state.status === AudioPlayerStatus.Idle)
+      this.processQueue();
   }
 
   public skip() {
     const skipped = this.currentSong;
+    this.audioPlayer.state.status = AudioPlayerStatus.Idle;
 
-    if (this.currentSong) {
-      this.audioPlayer.state.status = AudioPlayerStatus.Idle;
-      this.processQueue();
-    }
+    if (this.currentSong) this.processQueue();
 
     return skipped;
   }
@@ -113,7 +99,6 @@ class Player {
     this.currentSong = null;
     this.queue = [];
     this.audioPlayer.stop(true);
-    this.voiceConnection.disconnect();
   }
 
   public viewQueue() {
@@ -122,58 +107,48 @@ class Player {
 
   private async processQueue() {
     if (this.queue.length === 0) {
-      this.currentSong = null;
-      this.audioPlayer.stop(true);
-      this.voiceConnection.disconnect();
-
       return this.textChannel.send(i18n.__("commands.song.queueEmpty"));
     }
 
-    if (this.audioPlayer.state.status !== AudioPlayerStatus.Idle) return;
-
     this.currentSong = this.queue.shift()!;
-    const file = new AttachmentBuilder(this.currentSong.thumbnail);
-    await this.textChannel.send({
-      content: i18n.__mf("commands.song.playing", this.currentSong.title),
-      files: [file],
-    });
+    if (!this.currentSong) return;
 
     const hook = await getHook(this.currentSong);
     const hookResource = createAudioResource(hook);
 
-    try {
-      this.audioPlayer.play(hookResource);
-      this.inProcess = true;
+    this.inProcess = true;
+    this.audioPlayer.play(hookResource);
 
-      this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
-        if (!this.currentSong) return;
+    this.audioPlayer.on("error", (e: any) => {
+      log.error("Oh noes. Audio player error");
+      log.error(`Error playing ${this.currentSong?.title}`);
+    });
 
-        const stream = await this.songService.getReadableStream(
-          this.currentSong.videoId
-        );
-        const resource = createAudioResource(stream);
+    log.info("Playing: ", this.currentSong?.title);
+    log.debug(
+      `LISTENER COUNT: ${this.audioPlayer.listenerCount(
+        AudioPlayerStatus.Idle
+      )}`
+    );
+  }
 
-        this.audioPlayer.play(resource);
-        log.info("Playing: ", this.currentSong?.title);
+  private async playNextSong() {
+    if (!this.currentSong) return;
 
-        this.audioPlayer.on("error", (e: any) => {
-          log.error(`Error playing ${this.currentSong?.title}`);
-          log.error(e);
-        });
+    const song = this.currentSong;
+    const image = new AttachmentBuilder(song.thumbnail);
+    const stream = await songService.getReadableStream(
+      song.videoId
+    );
+    const resource = createAudioResource(stream);
 
-        this.inProcess = false;
-      });
+    await this.textChannel.send({
+      content: i18n.__mf("commands.song.playing", song.title),
+      files: [image],
+    });
 
-      log.debug(
-        `LISTENER COUNT: ${this.audioPlayer.listenerCount(
-          AudioPlayerStatus.Idle
-        )}`
-      );
-    } catch (e: any) {
-      log.error("Caught error playing song. Processing queue...");
-      log.error(e);
-      this.processQueue();
-    }
+    this.inProcess = false;
+    this.audioPlayer.play(resource);
   }
 }
 
