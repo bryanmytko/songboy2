@@ -3,7 +3,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Player from "../lib/player";
 import { saveSongHistory } from "../lib/history";
 import { i18n } from "../i18n.config";
-import { Source } from "../types/player";
+import { songService } from "../lib/songService";
 
 const execute = async (
   interaction: ChatInputCommandInteraction,
@@ -11,16 +11,12 @@ const execute = async (
   player: Player
 ) => {
   const { username } = interaction.user;
-
-  const song = await player.addSong({
-    requester: username,
-    query,
-    source: Source.Request,
-  });
+  const result = await songService.searchVideos(query);
+  const song = { ...result, requester: username };
 
   interaction.reply(i18n.__mf("commands.song.added", song.title));
-  player.addToQueue(song);
-  saveSongHistory(song);
+  player.play(song);
+  void saveSongHistory(song);
 };
 
 module.exports = {
