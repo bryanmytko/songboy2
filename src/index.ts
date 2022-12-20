@@ -27,8 +27,13 @@ const log: Logger = new Logger();
 const players = new Map<Snowflake, Player>();
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
+  intents: [
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.Guilds,
+  ],
 });
+
 client.commands = new Collection<string, Command>();
 
 const commandsPath = path.join(__dirname, "commands");
@@ -72,6 +77,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   const command = interaction.client.commands.get(interaction.commandName);
   const query = interaction.options.getString("search");
+  let voiceConnection;
 
   let player = players.get(guildId);
 
@@ -82,23 +88,37 @@ client.on(Events.InteractionCreate, async (interaction) => {
     ) {
       const { channel } = interaction.member.voice;
 
-      player = new Player(
-        joinVoiceChannel({
-          channelId: channel.id,
-          guildId: channel.guild.id,
-          adapterCreator: channel.guild.voiceAdapterCreator,
-        }),
-        textChannel
-      );
+      voiceConnection = joinVoiceChannel({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        adapterCreator: channel.guild.voiceAdapterCreator,
+        selfDeaf: false,
+      })
+
+      player = new Player(voiceConnection, textChannel);
 
       player.voiceConnection.on("error", console.warn);
       players.set(guildId, player);
     }
+
+    if (!player) {
+      interaction.reply(i18n.__("commands.song.noVoiceChannel"));
+      return;
+    }
   }
 
-  if (!player) {
-    interaction.reply(i18n.__("commands.song.noVoiceChannel"));
-    return;
+  // ref: https://stackoverflow.com/questions/71344815/how-would-i-detect-when-a-user-is-speaking-in-a-voice-channel-discord-js-v13
+  /* TODO
+  1. Speech -> Text API (mozilla? google?)
+  2. Convert result to command
+  3. How to listen to everyone (currently only listens to someone who uses a command)??
+  */
+  if (voiceConnection && interaction.member instanceof GuildMember) {
+    const r = voiceConnection.receiver;
+    r.subscribe(interaction.member.id);
+    r.speaking.on('start', userId => {
+      console.log("I hear you ", userId)
+    });
   }
 
   try {
