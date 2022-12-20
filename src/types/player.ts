@@ -4,14 +4,9 @@ export enum Source {
   Request,
 }
 
-export interface SongParams {
-  query: string;
-  requester: string;
-  source: Source;
-}
-
 export interface Song {
   requester: string;
+  source?: Source;
   thumbnail: string;
   title: string;
   videoId: string;

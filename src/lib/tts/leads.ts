@@ -34,10 +34,12 @@ const generateLeads = (song: string, name: string) => [
   "This one goes out to Fippy Fappy. Rest in peace.",
 ];
 
+const randomSongLead = (song: string, name: string) => `Here's a random pick, originally requested by ${name}. This is ${song}`;
+
 const randomLead = (song: string, name: string) => {
   const LEADS = generateLeads(song, name);
 
   return LEADS[Math.floor(Math.random() * LEADS.length)];
 };
 
-export { randomLead };
+export { randomLead, randomSongLead };

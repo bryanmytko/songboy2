@@ -125,11 +125,6 @@ class Player {
     });
 
     log.info("Playing: ", this.currentSong?.title);
-    log.debug(
-      `LISTENER COUNT: ${this.audioPlayer.listenerCount(
-        AudioPlayerStatus.Idle
-      )}`
-    );
   }
 
   private async playNextSong() {
