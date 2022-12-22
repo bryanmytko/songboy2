@@ -10,7 +10,7 @@
     },
     "build": "tsc",
     "deploy-commands": "npm run build && node deploy-commands.js",
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "pm2-runtime start ecosystem.config.js --env production",
     "start:dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,6 +26,7 @@
     "i18n": "^0.15.1",
     "libsodium-wrappers": "^0.7.10",
     "mongoose": "^6.7.5",
+    "pm2": "^5.2.2",
     "tslog": "^3.3.4",
     "youtube.ts": "^0.2.9"
   },
