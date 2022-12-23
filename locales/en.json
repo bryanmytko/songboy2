@@ -11,9 +11,9 @@
 	"commands": {
 		"queue": {
 			"desc": "See the current queue.",
+			"empty": "There are no songs currently in queue.",
 			"name": "queue",
-			"reply": "Current queue:",
-			"empty": "There are no songs currently in queue."
+			"reply": "Current queue:"
 		},
 		"random": {
 			"added": "Added random song \"%s\" to the queue.",
@@ -44,6 +44,17 @@
 			"desc": "Stop Songboy and wipe the playlist.",
 			"name": "stop",
 			"reply": ":skull: Songboy has stopped."
+		},
+		"top": {
+			"desc": "Request the top requested songs.",
+			"error": "Please enter a number between 1-10",
+			"name": "top",
+			"reply": "The top %s most requested songs:",
+			"search": {
+				"amount": "Type in the amount of top requests you want!",
+				"name": "search",
+				"desc": "how many?"
+			}
 		}
 	}
 }
