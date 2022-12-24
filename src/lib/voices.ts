@@ -27,7 +27,7 @@ const VOICES = [
   { languageCode: "en-GB", name: "en-GB-Wavenet-F", ssmGender: "FEMALE" },
   { languageCode: "en-US", name: "en-US-Standard-B", ssmGender: "MALE" },
   { languageCode: "en-US", name: "en-US-Standard-C", ssmGender: "FEMALE" },
-  { languageCode: "en-US", name: "en-US-Standard-D", ssmGender: "MALE" }, // 28
+  { languageCode: "en-US", name: "en-US-Standard-D", ssmGender: "MALE" },
   { languageCode: "en-US", name: "en-US-Standard-E", ssmGender: "FEMALE" },
   { languageCode: "en-US", name: "en-US-Standard-G", ssmGender: "FEMALE" },
   { languageCode: "en-US", name: "en-US-Standard-H", ssmGender: "FEMALE" },
