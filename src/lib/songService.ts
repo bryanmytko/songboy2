@@ -1,5 +1,5 @@
 import { Logger } from "tslog";
-import Youtube from "youtube.ts";
+import Youtube from "@bryanmytko/youtube.ts";
 import { Readable } from "stream";
 
 interface SearchResult {
