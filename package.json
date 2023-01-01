@@ -8,7 +8,7 @@
       "predeploy": "echo ${GOOGLE_CREDENTIALS} > /app/google-credentials.json",
       "postdeploy": "echo ${GOOGLE_CREDENTIALS} > /app/google-credentials.json"
     },
-    "build": "tsc",
+    "build": "tsc --build",
     "deploy-commands": "npm run build && node deploy-commands.js",
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "start:dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
