@@ -10,7 +10,6 @@ const execute = async (
   query: string,
   player: Player
 ) => {
-  console.log(query);
   const { username } = interaction.user;
   const result = await songService.searchVideos(query);
   const song = { ...result, requester: username };
