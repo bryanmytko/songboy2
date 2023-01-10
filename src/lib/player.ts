@@ -55,8 +55,8 @@ class Player {
               ),
             ]);
           } catch (e: any) {
-            log.error("VoiceConnection error", e?.message)
-            voiceConnection.disconnect();
+            log.error("VoiceConnection error", e?.message);
+            voiceConnection.rejoin();
           }
         }
       }
@@ -69,12 +69,14 @@ class Player {
           newState.status === AudioPlayerStatus.Idle &&
           oldState.status !== AudioPlayerStatus.Idle &&
           !this.inProcess
-        ) return this.processQueue();
+        )
+          return this.processQueue();
 
         if (
           newState.status === AudioPlayerStatus.Idle &&
           oldState.status !== AudioPlayerStatus.Idle
-        ) return this.playNextSong();
+        )
+          return this.playNextSong();
       }
     );
   }
@@ -132,9 +134,7 @@ class Player {
 
     const song = this.currentSong;
     const image = new AttachmentBuilder(song.thumbnail);
-    const stream = await songService.getReadableStream(
-      song.videoId
-    );
+    const stream = await songService.getReadableStream(song.videoId);
     const resource = createAudioResource(stream);
 
     await this.textChannel.send({
