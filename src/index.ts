@@ -75,7 +75,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   let player = players.get(guildId);
 
-  if (!player) {
+  if (!player || player.voiceConnection.state.status === "destroyed") {
     if (
       interaction.member instanceof GuildMember &&
       interaction.member.voice.channel

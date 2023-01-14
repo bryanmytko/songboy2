@@ -109,6 +109,7 @@ class Player {
 
   private async processQueue() {
     if (this.queue.length === 0) {
+      this.voiceConnection.destroy();
       return this.textChannel.send(i18n.__("commands.song.queueEmpty"));
     }
 
