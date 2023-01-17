@@ -1,60 +1,61 @@
 {
-	"status": {
-		"connected": "Connected as '%s'!",
-		"disconnected": "Songboy has disconnected."
-	},
-	"command": {
-		"error": "There was an error while executing this command!",
-		"missing": "No command matching '%s' was found.",
-		"missingProperty": "[WARNING] The command at '%s' is missing a required \"data\" or \"execute\" property."
-	},
-	"commands": {
-		"queue": {
-			"desc": "See the current queue.",
-			"empty": "There are no songs currently in queue.",
-			"name": "queue",
-			"reply": "Current queue:"
-		},
-		"random": {
-			"added": "Added random song \"%s\" to the queue.",
-			"desc": "Add a random song from all previously played tracks.",
-			"empty": "There are no songs in the history to randomize.",
-			"name": "random"
-		},
-		"skip": {
-			"desc": "Skip the current song.",
-			"empty": "There is nothing to skip, the queue is empty!",
-			"name": "skip",
-			"reply": "Skipped \"%s\"."
-		},
-		"song": {
-			"added": "Added your song \"%s\" to the queue!",
-			"desc": "Play or add a song to the queue.",
-			"name": "song",
-			"noGuild": "Something went wrong.",
-			"noVoiceChannel": "You must be in a voice channel to request a song!",
-			"playing": "Song Boy is playing \"%s\"",
-			"queueEmpty": "Queue is empty. Song Boy is out of music :cry:",
-			"search": {
-				"desc": "Type in the artist and/or song title to search!",
-				"name": "search"
-			}
-		},
-		"stop": {
-			"desc": "Stop Songboy and wipe the playlist.",
-			"name": "stop",
-			"reply": ":skull: Songboy has stopped."
-		},
-		"top": {
-			"desc": "Request the top requested songs.",
-			"error": "Please enter a number between 1-10",
-			"name": "top",
-			"reply": "The top %s most requested songs:",
-			"search": {
-				"amount": "Type in the amount of top requests you want!",
-				"name": "search",
-				"desc": "how many?"
-			}
-		}
-	}
+  "status": {
+    "connected": "Connected as '%s'!",
+    "disconnected": "Songboy has disconnected."
+  },
+  "command": {
+    "error": "There was an error while executing this command!",
+    "missing": "No command matching '%s' was found.",
+    "missingProperty": "[WARNING] The command at '%s' is missing a required \"data\" or \"execute\" property."
+  },
+  "commands": {
+    "queue": {
+      "desc": "See the current queue.",
+      "empty": "There are no songs currently in queue.",
+      "name": "queue",
+      "reply": "Current queue:"
+    },
+    "random": {
+      "added": "Added random song \"%s\" to the queue.",
+      "desc": "Add a random song from all previously played tracks.",
+      "empty": "There are no songs in the history to randomize.",
+      "name": "random"
+    },
+    "skip": {
+      "desc": "Skip the current song.",
+      "empty": "There is nothing to skip, the queue is empty!",
+      "name": "skip",
+      "reply": "Skipped \"%s\"."
+    },
+    "song": {
+      "added": "Added your song \"%s\" to the queue!",
+      "channelPermission": ":warning: Sorry I can't seem to connect to your voice channel.",
+      "desc": "Play or add a song to the queue.",
+      "name": "song",
+      "noGuild": "Something went wrong.",
+      "noVoiceChannel": "You must be in a voice channel to request a song!",
+      "playing": "Song Boy is playing \"%s\"",
+      "queueEmpty": "Queue is empty. Song Boy is out of music :cry:",
+      "search": {
+        "desc": "Type in the artist and/or song title to search!",
+        "name": "search"
+      }
+    },
+    "stop": {
+      "desc": "Stop Songboy and wipe the playlist.",
+      "name": "stop",
+      "reply": ":skull: Songboy has stopped."
+    },
+    "top": {
+      "desc": "Request the top requested songs.",
+      "error": "Please enter a number between 1-10",
+      "name": "top",
+      "reply": "The top %s most requested songs:",
+      "search": {
+        "amount": "Type in the amount of top requests you want!",
+        "name": "search",
+        "desc": "how many?"
+      }
+    }
+  }
 }
