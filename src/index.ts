@@ -76,10 +76,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
   let player = players.get(guildId);
 
   if (!player || player.voiceConnection.state.status === "destroyed") {
-    if (!player) log.info("Starting a new player");
-    if (player && player.voiceConnection.state.status === "destroyed")
-      log.info("Connection was destroyed. Starting again...");
-
     if (
       interaction.member instanceof GuildMember &&
       interaction.member.voice.channel
