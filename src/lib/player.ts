@@ -56,7 +56,7 @@ class Player {
             ]);
           } catch (e: any) {
             log.error("VoiceConnection error", e?.message);
-            voiceConnection.rejoin();
+            voiceConnection.destroy();
           }
         }
       }
@@ -83,9 +83,7 @@ class Player {
 
   public async play(song: Song) {
     this.queue.push(song);
-
-    if (this.audioPlayer.state.status === AudioPlayerStatus.Idle)
-      this.processQueue();
+    this.processQueue();
   }
 
   public skip() {
@@ -123,7 +121,7 @@ class Player {
     this.inProcess = true;
     this.audioPlayer.play(hookResource);
 
-    this.audioPlayer.on("error", (e: any) => {
+    this.audioPlayer.on("error", (_: any) => {
       log.error("Oh noes. Audio player error");
       log.error(`Error playing ${this.currentSong?.title}`);
     });
