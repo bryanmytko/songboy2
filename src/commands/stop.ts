@@ -9,6 +9,8 @@ const execute = async (
   player: Player
 ) => {
   player.stop();
+  player.voiceConnection.destroy();
+
   return interaction.reply(i18n.__("commands.stop.reply"));
 };
 
