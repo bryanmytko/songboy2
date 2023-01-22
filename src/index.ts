@@ -1,4 +1,5 @@
 import {
+  ChannelType,
   Client,
   Collection,
   Events,
@@ -65,10 +66,17 @@ client.once(Events.ClientReady, (c) => {
 
 client.login(DISCORD_BOT_TOKEN);
 
+const validTextChannels = ["songboy", "song-boy", "songs", "music"];
+
 client.on(Events.InteractionCreate, async (interaction) => {
   const { channel: textChannel, guildId } = interaction;
 
   if (!guildId || !textChannel || !interaction.isChatInputCommand()) return;
+  if (
+    textChannel.type === ChannelType.GuildText &&
+    !validTextChannels.includes(textChannel.name)
+  )
+    return void interaction.reply("no.");
 
   const command = interaction.client.commands.get(interaction.commandName);
   const query = interaction.options.getString("search");
