@@ -16,6 +16,7 @@ import { Logger } from "tslog";
 import { Command } from "./types";
 import { i18n } from "./i18n.config";
 import Player from "./lib/player";
+import { VALID_TEXT_CHANNELS, validateTextChannel } from "./lib/validators";
 
 require("dotenv").config();
 const { DISCORD_BOT_TOKEN, MONGO_URL } = process.env;
@@ -66,17 +67,16 @@ client.once(Events.ClientReady, (c) => {
 
 client.login(DISCORD_BOT_TOKEN);
 
-const validTextChannels = ["songboy", "song-boy", "songs", "music"];
-
 client.on(Events.InteractionCreate, async (interaction) => {
   const { channel: textChannel, guildId } = interaction;
 
   if (!guildId || !textChannel || !interaction.isChatInputCommand()) return;
   if (
     textChannel.type === ChannelType.GuildText &&
-    !validTextChannels.includes(textChannel.name)
-  )
-    return void interaction.reply("no.");
+    !VALID_TEXT_CHANNELS.includes(textChannel.name)
+  ) {
+    return validateTextChannel(interaction);
+  }
 
   const command = interaction.client.commands.get(interaction.commandName);
   const query = interaction.options.getString("search");
