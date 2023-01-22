@@ -6,7 +6,8 @@
   "command": {
     "error": "There was an error while executing this command!",
     "missing": "No command matching '%s' was found.",
-    "missingProperty": "[WARNING] The command at '%s' is missing a required \"data\" or \"execute\" property."
+    "missingProperty": "[WARNING] The command at '%s' is missing a required \"data\" or \"execute\" property.",
+    "rejection": "Please use the #song-boy channel to request songs!"
   },
   "commands": {
     "queue": {
