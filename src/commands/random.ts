@@ -17,7 +17,9 @@ const execute = async (
   const { requester, url } = record;
   const result = await songService.searchVideos(url);
   const song = {
-    ...result, requester, source: Source.Random
+    ...result,
+    requester,
+    source: Source.Random,
   };
 
   interaction.reply(i18n.__mf("commands.random.added", song.title));
