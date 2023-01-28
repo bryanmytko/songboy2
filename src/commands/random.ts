@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 import Player from "../lib/player";
-import { Song } from "../models/song";
+import { random } from "../models/song";
 import { i18n } from "../i18n.config";
 import { songService } from "../lib/songService";
 import { Source } from "../types/player";
@@ -11,9 +11,7 @@ const execute = async (
   _: string,
   player: Player
 ) => {
-  const record = await randomRecord();
-
-  console.log("interactin", interaction);
+  const record = await random();
 
   if (!record) return interaction.reply(i18n.__("commands.random.empty"));
 
@@ -26,6 +24,7 @@ const execute = async (
   };
 
   interaction.reply(i18n.__mf("commands.random.added", song.title));
+
   player.play(song);
 };
 
@@ -34,12 +33,4 @@ module.exports = {
     .setName(i18n.__("commands.random.name"))
     .setDescription(i18n.__("commands.random.desc")),
   execute,
-};
-
-const randomRecord = async () => {
-  console.log("random record...");
-  const count = await Song.countDocuments();
-  console.log("count", count);
-  const random = Math.floor(Math.random() * count);
-  return Song.findOne().skip(random);
 };
