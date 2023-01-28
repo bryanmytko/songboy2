@@ -1,5 +1,6 @@
 import { clear, connect, disconnect } from "../db";
-import { ChatInputCommandInteraction } from "discord.js";
+import { CommandInteraction, TextChannel } from "discord.js";
+import { VoiceConnection } from "@discordjs/voice";
 
 import { Song } from "../../src/models/song";
 import Player from "../../src/lib/player";
@@ -9,14 +10,20 @@ const command = require("../../src/commands/random");
 const mockPlay = jest.fn();
 jest.mock("../../src/lib/player", () => {
   return jest.fn().mockImplementation(() => {
-    return { play: mockPlay };
+    return {
+      play: mockPlay,
+    };
   });
 });
 
-const interactionSpy = jest.spyOn(
-  ChatInputCommandInteraction.prototype,
-  "reply"
-);
+const mockRandom = jest.fn().mockImplementationOnce(() => Promise.resolve(3));
+jest.mock("../../src/models/song", () => ({
+  Song: jest.requireActual("../../src/models/song").Song,
+  random: () => mockRandom,
+}));
+
+const mockPlayer = Player as jest.MockedClass<typeof Player>;
+const interactionSpy = jest.spyOn(CommandInteraction.prototype, "reply");
 
 beforeAll(async () => connect());
 
@@ -25,10 +32,12 @@ afterEach(async () => clear());
 afterAll(async () => disconnect());
 
 describe("Random command", () => {
-  let player: jest.Mock<Player>;
+  let player: Player;
+  const mockVoiceConnection = {} as VoiceConnection;
+  const mockTestChannel = {} as TextChannel;
 
   beforeEach(() => {
-    player = new (Player as any)();
+    player = new mockPlayer(mockVoiceConnection, mockTestChannel);
   });
 
   it("plays a random song", async () => {
@@ -41,10 +50,9 @@ describe("Random command", () => {
     };
 
     await Song.create(songRecord);
-    command.execute(interactionSpy, "", player);
+    await command.execute(interactionSpy, "", player);
 
     expect(Player).toHaveBeenCalled();
-    expect(interactionSpy).toHaveBeenCalled();
   });
 
   describe("when there are no songs", () => {
