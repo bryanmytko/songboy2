@@ -12,6 +12,9 @@ const execute = async (
   player: Player
 ) => {
   const record = await randomRecord();
+
+  console.log("interactin", interaction);
+
   if (!record) return interaction.reply(i18n.__("commands.random.empty"));
 
   const { requester, url } = record;
@@ -34,7 +37,9 @@ module.exports = {
 };
 
 const randomRecord = async () => {
+  console.log("random record...");
   const count = await Song.countDocuments();
+  console.log("count", count);
   const random = Math.floor(Math.random() * count);
   return Song.findOne().skip(random);
 };

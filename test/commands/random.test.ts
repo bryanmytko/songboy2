@@ -1,7 +1,22 @@
 import { clear, connect, disconnect } from "../db";
+import { ChatInputCommandInteraction } from "discord.js";
+
 import { Song } from "../../src/models/song";
+import Player from "../../src/lib/player";
 
 const command = require("../../src/commands/random");
+
+const mockPlay = jest.fn();
+jest.mock("../../src/lib/player", () => {
+  return jest.fn().mockImplementation(() => {
+    return { play: mockPlay };
+  });
+});
+
+const interactionSpy = jest.spyOn(
+  ChatInputCommandInteraction.prototype,
+  "reply"
+);
 
 beforeAll(async () => connect());
 
@@ -9,11 +24,13 @@ afterEach(async () => clear());
 
 afterAll(async () => disconnect());
 
-import Player from "../../src/lib/player";
-
-const playerSpy = jest.spyOn(Player.prototype, "play");
-
 describe("Random command", () => {
+  let player: jest.Mock<Player>;
+
+  beforeEach(() => {
+    player = new (Player as any)();
+  });
+
   it("plays a random song", async () => {
     const songRecord = {
       title: "Faith of the Heart",
@@ -24,8 +41,10 @@ describe("Random command", () => {
     };
 
     await Song.create(songRecord);
-    command.execute("", playerSpy);
-    expect(playerSpy).toHaveBeenCalled();
+    command.execute(interactionSpy, "", player);
+
+    expect(Player).toHaveBeenCalled();
+    expect(interactionSpy).toHaveBeenCalled();
   });
 
   describe("when there are no songs", () => {
