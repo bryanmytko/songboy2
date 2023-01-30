@@ -4,6 +4,7 @@ import { VoiceConnection } from "@discordjs/voice";
 
 import { Song } from "../../src/models/song";
 import Player from "../../src/lib/player";
+import { mockInteraction } from "../mocks/discord";
 
 const command = require("../../src/commands/random");
 
@@ -16,31 +17,36 @@ jest.mock("../../src/lib/player", () => {
   });
 });
 
-const mockRandom = jest.fn().mockImplementationOnce(() => Promise.resolve(3));
-jest.mock("../../src/models/song", () => ({
-  Song: jest.requireActual("../../src/models/song").Song,
-  random: () => mockRandom,
-}));
-
-const mockPlayer = Player as jest.MockedClass<typeof Player>;
-const interactionSpy = jest.spyOn(CommandInteraction.prototype, "reply");
-
-beforeAll(async () => connect());
-
-afterEach(async () => clear());
-
-afterAll(async () => disconnect());
-
 describe("Random command", () => {
-  let player: Player;
+  const mockPlayer = Player as jest.MockedClass<typeof Player>;
   const mockVoiceConnection = {} as VoiceConnection;
   const mockTestChannel = {} as TextChannel;
 
+  mockInteraction.reply = jest.fn();
+  const interactionSpy = jest.spyOn(mockInteraction, "reply");
+
+  let player: Player;
+
+  afterEach(async () => clear());
+  afterAll(async () => disconnect());
+
+  beforeAll(async () => connect());
   beforeEach(() => {
     player = new mockPlayer(mockVoiceConnection, mockTestChannel);
   });
 
+  afterEach(() => jest.clearAllMocks());
+
   it("plays a random song", async () => {
+    const mockRandom = jest
+      .fn()
+      .mockImplementationOnce(() => Promise.resolve());
+
+    jest.mock("../../src/models/song", () => ({
+      Song: jest.requireActual("../../src/models/song").Song,
+      random: () => mockRandom,
+    }));
+
     const songRecord = {
       title: "Faith of the Heart",
       url: "B0azMOJ-h_o",
@@ -50,12 +56,17 @@ describe("Random command", () => {
     };
 
     await Song.create(songRecord);
-    await command.execute(interactionSpy, "", player);
+    await command.execute(mockInteraction, "", player);
 
-    expect(Player).toHaveBeenCalled();
+    expect(player.play).toHaveBeenCalled();
   });
 
   describe("when there are no songs", () => {
-    it("explodes", () => {});
+    it("it does not call the player", async () => {
+      await command.execute(mockInteraction, "", player);
+
+      expect(player.play).not.toHaveBeenCalled();
+      expect(interactionSpy).toHaveBeenCalled();
+    });
   });
 });
