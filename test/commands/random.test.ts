@@ -27,15 +27,16 @@ describe("Random command", () => {
 
   let player: Player;
 
-  afterEach(async () => clear());
   afterAll(async () => disconnect());
+  afterEach(async () => {
+    jest.clearAllMocks();
+    await clear();
+  });
 
   beforeAll(async () => connect());
   beforeEach(() => {
     player = new mockPlayer(mockVoiceConnection, mockTestChannel);
   });
-
-  afterEach(() => jest.clearAllMocks());
 
   it("plays a random song", async () => {
     const mockRandom = jest
