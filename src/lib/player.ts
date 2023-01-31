@@ -83,7 +83,9 @@ class Player {
 
   public async play(song: Song) {
     this.queue.push(song);
-    this.processQueue();
+
+    if (this.audioPlayer.state.status === AudioPlayerStatus.Idle)
+      this.processQueue();
   }
 
   public skip() {
