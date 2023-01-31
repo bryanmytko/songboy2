@@ -1,6 +1,7 @@
 import { Logger } from "tslog";
 import Youtube from "@bryanmytko/youtube.ts";
 import { Readable } from "stream";
+import { decode } from "html-entities";
 
 interface SearchResult {
   videoId: string;
@@ -35,7 +36,7 @@ class SongService {
 
       return {
         videoId,
-        title: snippet.title.replace(/&quot;/g, '"') || "",
+        title: decode(snippet.title) || "",
         thumbnail: snippet.thumbnails.high.url || "",
       };
     } catch (e: any) {
