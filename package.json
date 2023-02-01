@@ -10,7 +10,7 @@
     },
     "build": "tsc --build",
     "deploy-commands": "npm run build && node deploy-commands.js",
-    "start": "pm2-runtime start ecosystem.config.js --env production",
+    "start": "npm run build && pm2-runtime start ecosystem.config.js --env production",
     "start:dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "test": "jest"
   },
