@@ -32,9 +32,11 @@ const generateLeads = (song: string, name: string) => [
   `Hi, I'm Songboy and I'm being forced to play ${song}`,
   `Snap your fingers and your spaghetti noodles to this hit. Here's ${song}`,
   "This one goes out to Fippy Fappy. Rest in peace.",
+  `This is the song that inspired Eddie Vedder to jump out of a bush. Here's ${song}`,
 ];
 
-const randomSongLead = (song: string, name: string) => `Here's a random pick, originally requested by ${name}. This is ${song}`;
+const randomSongLead = (song: string, name: string) =>
+  `Here's a random pick, originally requested by ${name}. This is ${song}`;
 
 const randomLead = (song: string, name: string) => {
   const LEADS = generateLeads(song, name);
