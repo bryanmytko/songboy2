@@ -17,14 +17,16 @@ const execute = async (
   const result = await songService.searchVideos(query);
   const song = { ...result, requester: username };
 
-  if (player.voiceConnection.state.status === "signalling") {
-    log.info(`${username} tried to request a song from a private chanel.`);
-    interaction.reply(i18n.__("commands.song.channelPermission"));
-    player.voiceConnection.destroy();
-  } else {
+  try {
     interaction.reply(i18n.__mf("commands.song.added", song.title));
     player.play(song);
     void saveSongHistory(song);
+  } catch (e: any) {
+    log.info(
+      `Song request failed. Maybe ${username} tried to request a song from a private chanel.`
+    );
+    interaction.reply(i18n.__("commands.song.channelPermission"));
+    player.voiceConnection.destroy();
   }
 };
 
