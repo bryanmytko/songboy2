@@ -5,6 +5,7 @@ import {
   createAudioPlayer,
   createAudioResource,
   entersState,
+  NoSubscriberBehavior,
   VoiceConnection,
   VoiceConnectionState,
   VoiceConnectionStatus,
@@ -30,16 +31,30 @@ class Player {
   constructor(voiceConnection: VoiceConnection, textChannel: TextBasedChannel) {
     this.voiceConnection = voiceConnection;
     this.textChannel = textChannel;
-    this.audioPlayer = createAudioPlayer();
+    this.audioPlayer = createAudioPlayer({
+      behaviors: {
+        noSubscriber: NoSubscriberBehavior.Play
+      }
+    });
     this.currentSong;
     this.queue = [];
     this.inProcess = false;
 
     voiceConnection.subscribe(this.audioPlayer);
 
+    /* Workaround to the disconnect bug: https://github.com/discordjs/discord.js/issues/9185#issuecomment-1459083216 */
+    /* Also Reflect references in lines 55-56 */
+    const networkStateChangeHandler = (_: any, newNetworkState: any) => {
+      const newUdp = Reflect.get(newNetworkState, 'udp');
+      clearInterval(newUdp?.keepAliveInterval);
+    }
+
     this.voiceConnection.on(
       "stateChange",
-      async (_: VoiceConnectionState, newState: VoiceConnectionState) => {
+      async (oldState: VoiceConnectionState, newState: VoiceConnectionState) => {
+        Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
+        Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
+
         if (newState.status === "disconnected") {
           try {
             await Promise.race([
