@@ -36,8 +36,8 @@ module.exports = {
     .setDescription(i18n.__("commands.top.desc"))
     .addStringOption((option) =>
       option
-        .setName(i18n.__("commands.top.search.name"))
-        .setDescription(i18n.__("commands.top.search.desc"))
+        .setName(i18n.__("commands.top.query.name"))
+        .setDescription(i18n.__("commands.top.query.desc"))
         .setRequired(true)
     ),
   execute,
