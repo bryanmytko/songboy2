@@ -79,7 +79,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 
   const command = interaction.client.commands.get(interaction.commandName);
-  const query = interaction.options.getString("search");
+  const query = interaction.options.getString("query");
 
   let player = players.get(guildId);
 
