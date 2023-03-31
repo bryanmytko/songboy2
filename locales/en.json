@@ -10,6 +10,14 @@
     "rejection": "Please use the #song-boy channel to request songs!"
   },
   "commands": {
+    "chat": {
+      "desc": "Chat with SongBoy",
+      "name": "chat",
+      "query": {
+        "desc": "Write anything you want to say or ask...",
+        "name": "query"
+      }
+    },
     "queue": {
       "desc": "See the current queue.",
       "empty": "There are no songs currently in queue.",
@@ -37,9 +45,12 @@
       "noVoiceChannel": "You must be in a voice channel to request a song!",
       "playing": "Song Boy is playing \"%s\"",
       "queueEmpty": "Queue is empty. Song Boy is out of music :cry:",
-      "search": {
+      "query": {
         "desc": "Type in the artist and/or song title to search!",
-        "name": "search"
+        "name": "query"
+      },
+      "search": {
+        "name": "commands.song.search.name"
       }
     },
     "stop": {
@@ -52,10 +63,13 @@
       "error": "Please enter a number between 1-10",
       "name": "top",
       "reply": "The top %s most requested songs:",
-      "search": {
+      "query": {
         "amount": "Type in the amount of top requests you want!",
-        "name": "search",
+        "name": "query",
         "desc": "how many?"
+      },
+      "search": {
+        "name": "commands.top.search.name"
       }
     }
   }
