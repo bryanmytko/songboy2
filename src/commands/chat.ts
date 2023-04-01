@@ -3,16 +3,21 @@ import { Logger } from "tslog";
 
 import chat from "../lib/chat";
 import Player from "../lib/player";
-
 import { i18n } from "../i18n.config";
 
+require("dotenv").config();
+
 const log: Logger = new Logger();
+const CHAT_ENABLED = process.env.CHAT_ENABLED;
 
 const execute = async (
   interaction: ChatInputCommandInteraction,
   query: string,
   player: Player
 ) => {
+  if (CHAT_ENABLED !== "true")
+    return interaction.reply(i18n.__("commands.chat.off"));
+
   const completion = await chat(query);
 
   try {
