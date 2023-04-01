@@ -36,8 +36,8 @@ module.exports = {
     .setDescription(i18n.__("commands.song.desc"))
     .addStringOption((option) =>
       option
-        .setName(i18n.__("commands.song.search.name"))
-        .setDescription(i18n.__("commands.song.search.desc"))
+        .setName(i18n.__("commands.song.query.name"))
+        .setDescription(i18n.__("commands.song.query.desc"))
         .setRequired(true)
     ),
   execute,

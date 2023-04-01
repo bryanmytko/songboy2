@@ -19,6 +19,12 @@ const getHook = async (song: Song) => {
   });
 };
 
+const getSpeech = async (text: string) => synthesizedSpeechStream({
+  input: { text },
+  voice: randomVoice(),
+  audioConfig: { audioEncoding: "MP3", speakingRate: 1.0 },
+});
+
 const synthesizedSpeechStream = async (
   request: google.cloud.texttospeech.v1.ISynthesizeSpeechRequest
 ) => {
@@ -30,4 +36,4 @@ const synthesizedSpeechStream = async (
   return stream;
 };
 
-export { getHook };
+export { getHook, getSpeech };

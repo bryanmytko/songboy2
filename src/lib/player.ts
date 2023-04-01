@@ -15,7 +15,7 @@ import { Logger } from "tslog";
 
 import { i18n } from "../i18n.config";
 import { songService } from "../lib/songService";
-import { getHook } from "../lib/hooks";
+import { getHook, getSpeech } from "../lib/speech";
 import { Song } from "../types/player";
 
 const log: Logger = new Logger();
@@ -33,8 +33,8 @@ class Player {
     this.textChannel = textChannel;
     this.audioPlayer = createAudioPlayer({
       behaviors: {
-        noSubscriber: NoSubscriberBehavior.Play
-      }
+        noSubscriber: NoSubscriberBehavior.Play,
+      },
     });
     this.currentSong;
     this.queue = [];
@@ -45,15 +45,24 @@ class Player {
     /* Workaround to the disconnect bug: https://github.com/discordjs/discord.js/issues/9185#issuecomment-1459083216 */
     /* Also Reflect references in lines 55-56 */
     const networkStateChangeHandler = (_: any, newNetworkState: any) => {
-      const newUdp = Reflect.get(newNetworkState, 'udp');
+      const newUdp = Reflect.get(newNetworkState, "udp");
       clearInterval(newUdp?.keepAliveInterval);
-    }
+    };
 
     this.voiceConnection.on(
       "stateChange",
-      async (oldState: VoiceConnectionState, newState: VoiceConnectionState) => {
-        Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
-        Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
+      async (
+        oldState: VoiceConnectionState,
+        newState: VoiceConnectionState
+      ) => {
+        Reflect.get(oldState, "networking")?.off(
+          "stateChange",
+          networkStateChangeHandler
+        );
+        Reflect.get(newState, "networking")?.on(
+          "stateChange",
+          networkStateChangeHandler
+        );
 
         if (newState.status === "disconnected") {
           try {
@@ -110,6 +119,14 @@ class Player {
     if (this.currentSong) this.processQueue();
 
     return skipped;
+  }
+
+  public async speech(text: string | undefined) {
+    const speech = text ? await getSpeech(text) : "Something went wrong.";
+    const speechResource = createAudioResource(speech);
+
+    this.inProcess = true;
+    this.audioPlayer.play(speechResource);
   }
 
   public stop() {
