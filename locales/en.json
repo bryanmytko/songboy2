@@ -1,7 +1,8 @@
 {
   "status": {
     "connected": "Connected as '%s'!",
-    "disconnected": "Songboy has disconnected."
+    "disconnected": "Songboy has disconnected.",
+    "aiDown": "Sorry, I can't chat right now. OpenAI is expensive and I've used up all my credits."
   },
   "command": {
     "error": "There was an error while executing this command!",
@@ -11,7 +12,9 @@
   },
   "commands": {
     "chat": {
+      "channelPermission": ":warning: Sorry I can't seem to connect to your voice channel.",
       "desc": "Chat with SongBoy",
+      "error": "Something went wrong with the chat API.",
       "name": "chat",
       "query": {
         "desc": "Write anything you want to say or ask...",
