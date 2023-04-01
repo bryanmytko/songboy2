@@ -1,17 +1,29 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Logger } from "tslog";
 
+import chat from "../lib/chat";
+import Player from "../lib/player";
+
 import { i18n } from "../i18n.config";
 
 const log: Logger = new Logger();
 
 const execute = async (
   interaction: ChatInputCommandInteraction,
-  query: string
+  query: string,
+  player: Player
 ) => {
-  log.info("Chat input:", query);
+  const completion = await chat(query);
 
-  interaction.reply(`Okay, got it: ${query}`);
+  try {
+    player.speech(completion);
+    await interaction.deferReply();
+    return interaction.editReply(completion || "");
+  } catch (e: any) {
+    log.error(i18n.__("commands.chat.error"));
+    interaction.reply(i18n.__("commands.chat.channelPermission"));
+    player.voiceConnection.destroy();
+  }
 };
 
 module.exports = {
