@@ -16,6 +16,7 @@
       "desc": "Chat with SongBoy",
       "error": "Something went wrong with the chat API.",
       "name": "chat",
+      "off": "Sorry, this experimental command is currently turned off.",
       "query": {
         "desc": "Write anything you want to say or ask...",
         "name": "query"
