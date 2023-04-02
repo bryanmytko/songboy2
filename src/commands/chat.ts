@@ -18,12 +18,14 @@ const execute = async (
   if (CHAT_ENABLED !== "true")
     return interaction.reply(i18n.__("commands.chat.off"));
 
+  const { username } = interaction.user;
   const completion = await chat(query);
+  const response = `${username} said: "*${query}*" \`\`\`${completion}\`\`\``;
 
   try {
     player.speech(completion);
     await interaction.deferReply();
-    return interaction.editReply(completion || "");
+    return interaction.editReply(response);
   } catch (e: any) {
     log.error(i18n.__("commands.chat.error"));
     interaction.reply(i18n.__("commands.chat.channelPermission"));
