@@ -46,7 +46,7 @@
       "desc": "Play or add a song to the queue.",
       "name": "song",
       "noGuild": "Something went wrong.",
-      "noVoiceChannel": "You must be in a voice channel to request a song!",
+      "noVoiceChannel": "You must be in a voice channel to make that kind of request.",
       "playing": "Song Boy is playing \"%s\"",
       "queueEmpty": "Queue is empty. Song Boy is out of music :cry:",
       "query": {
