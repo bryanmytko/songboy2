@@ -75,7 +75,7 @@ CHAT_ENABLED=true
 
 [https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=0&scope=bot%20applications.commands](https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=0&scope=bot%20applications.commands)
 
-7. Deploy commands to Discord
+7. Deploy commands to Discord. You can run this remotely or locally as long as the discord tokens are set.
 
 ```console
 $ npm run deploy-commands
