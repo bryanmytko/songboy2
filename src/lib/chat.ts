@@ -20,7 +20,7 @@ const chat = async (query: string) => {
       max_tokens: 64,
     });
 
-    return completion.data.choices[0].text;
+    return trimCompletion(completion.data.choices[0].text);
   } catch (error: any) {
     if (error.response) {
       log.error(error.response.status);
@@ -30,6 +30,17 @@ const chat = async (query: string) => {
     }
     return i18n.__("status.aiDown");
   }
+};
+
+const trimCompletion = (str: string | undefined): string => {
+  if (!str) return "";
+
+  const split = str.split(".");
+
+  if (split.length <= 1) return str;
+  split.pop();
+
+  return `${split.join(".")}.`;
 };
 
 export default chat;
