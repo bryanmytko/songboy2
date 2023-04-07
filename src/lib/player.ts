@@ -42,28 +42,12 @@ class Player {
 
     voiceConnection.subscribe(this.audioPlayer);
 
-    /* Workaround to the disconnect bug: https://github.com/discordjs/discord.js/issues/9185#issuecomment-1459083216 */
-    /* Also Reflect references in lines 55-56 */
-    const networkStateChangeHandler = (_: any, newNetworkState: any) => {
-      const newUdp = Reflect.get(newNetworkState, "udp");
-      clearInterval(newUdp?.keepAliveInterval);
-    };
-
     this.voiceConnection.on(
       "stateChange",
       async (
         oldState: VoiceConnectionState,
         newState: VoiceConnectionState
       ) => {
-        Reflect.get(oldState, "networking")?.off(
-          "stateChange",
-          networkStateChangeHandler
-        );
-        Reflect.get(newState, "networking")?.on(
-          "stateChange",
-          networkStateChangeHandler
-        );
-
         if (newState.status === "disconnected") {
           try {
             await Promise.race([

@@ -23,7 +23,7 @@ const execute = async (
     void saveSongHistory(song);
   } catch (e: any) {
     log.info(
-      `Song request failed. Maybe ${username} tried to request a song from a private chanel.`
+      `Song request failed. Maybe ${username} tried to request a song from a private channel.`
     );
     interaction.reply(i18n.__("commands.song.channelPermission"));
     player.voiceConnection.destroy();
