@@ -48,8 +48,6 @@ class Player {
         oldState: VoiceConnectionState,
         newState: VoiceConnectionState
       ) => {
-        console.log("OLD:", oldState);
-        console.log("NEW:", newState);
         if (newState.status === "disconnected") {
           try {
             await Promise.race([
@@ -82,11 +80,13 @@ class Player {
         )
           return this.processQueue();
 
+        /* This is how we play consecutive audio - this state occurs
+           when the hook finishes playing but the lock persists */
         if (
           newState.status === AudioPlayerStatus.Idle &&
           oldState.status !== AudioPlayerStatus.Idle
         )
-          return this.playNextSong();
+          return this.playSong();
       }
     );
   }
@@ -94,8 +94,10 @@ class Player {
   public async play(song: Song) {
     this.queue.push(song);
 
-    if (this.audioPlayer.state.status === AudioPlayerStatus.Idle)
+    if (this.audioPlayer.state.status === AudioPlayerStatus.Idle) {
       this.processQueue();
+      await this.playHook();
+    }
   }
 
   public skip() {
@@ -113,6 +115,7 @@ class Player {
 
     this.inProcess = true;
     this.audioPlayer.play(speechResource);
+    this.inProcess = false;
   }
 
   public stop() {
@@ -125,7 +128,7 @@ class Player {
     return this.queue;
   }
 
-  private async processQueue() {
+  private processQueue() {
     if (this.queue.length === 0) {
       log.info("Queue is empty. Destroying the connection.");
       this.voiceConnection.destroy();
@@ -134,23 +137,23 @@ class Player {
     }
 
     this.currentSong = this.queue.shift()!;
+  }
+
+  private async playHook() {
     if (!this.currentSong) return;
 
     const hook = await getHook(this.currentSong);
     const hookResource = createAudioResource(hook);
 
+    /* Since we can't just wait for audio to finish playing,
+       this lock is required for playing consecutive audio (hook into song)
+       It allows for a transition between states without just skipping to
+       the next song */
     this.inProcess = true;
     this.audioPlayer.play(hookResource);
-
-    this.audioPlayer.on("error", (_: any) => {
-      log.error("Oh noes. Audio player error");
-      log.error(`Error playing ${this.currentSong?.title}`);
-    });
-
-    log.info("Playing: ", this.currentSong?.title);
   }
 
-  private async playNextSong() {
+  private async playSong() {
     if (!this.currentSong) return;
 
     const song = this.currentSong;
@@ -165,6 +168,14 @@ class Player {
 
     this.inProcess = false;
     this.audioPlayer.play(resource);
+
+    this.audioPlayer.on("error", (e: any) => {
+      log.error("Error:", e)
+      log.error("Oh noes. Audio player error");
+      log.error(`Error playing ${this.currentSong?.title}`);
+    });
+
+    log.info("Playing: ", this.currentSong?.title);
   }
 }
 
