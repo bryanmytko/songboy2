@@ -6,6 +6,7 @@ import {
   GatewayIntentBits,
   GuildMember,
   Snowflake,
+  TextChannel,
 } from "discord.js";
 import { joinVoiceChannel, VoiceConnectionStatus } from "@discordjs/voice";
 import mongoose from "mongoose";
@@ -16,7 +17,7 @@ import { Logger } from "tslog";
 import { Command } from "./types";
 import { i18n } from "./i18n.config";
 import Player from "./lib/player";
-import { VALID_TEXT_CHANNELS, validateTextChannel } from "./lib/validators";
+import { VALID_TEXT_CHANNELS, invalidTextChannel } from "./lib/validators";
 
 require("dotenv").config();
 const { DISCORD_BOT_TOKEN, MONGO_URL } = process.env;
@@ -70,12 +71,12 @@ client.login(DISCORD_BOT_TOKEN);
 client.on(Events.InteractionCreate, async (interaction) => {
   const { channel: textChannel, guildId } = interaction;
 
-  if (!guildId || !textChannel || !interaction.isChatInputCommand()) return;
+  if (!guildId || !(textChannel instanceof TextChannel) || !interaction.isChatInputCommand()) return;
+
   if (
-    textChannel.type === ChannelType.GuildText &&
     !VALID_TEXT_CHANNELS.includes(textChannel.name)
   ) {
-    return validateTextChannel(interaction);
+    return invalidTextChannel(interaction);
   }
 
   const command = interaction.client.commands.get(interaction.commandName);

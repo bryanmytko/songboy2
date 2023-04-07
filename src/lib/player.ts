@@ -10,7 +10,7 @@ import {
   VoiceConnectionState,
   VoiceConnectionStatus,
 } from "@discordjs/voice";
-import { AttachmentBuilder, TextBasedChannel } from "discord.js";
+import { AttachmentBuilder, TextChannel } from "discord.js";
 import { Logger } from "tslog";
 
 import { i18n } from "../i18n.config";
@@ -22,13 +22,13 @@ const log: Logger = new Logger();
 
 class Player {
   public readonly voiceConnection: VoiceConnection;
-  public readonly textChannel: TextBasedChannel;
+  public readonly textChannel: TextChannel;
   public readonly audioPlayer: AudioPlayer;
   public currentSong: Song | null | undefined;
   public queue: Song[];
   public inProcess: boolean;
 
-  constructor(voiceConnection: VoiceConnection, textChannel: TextBasedChannel) {
+  constructor(voiceConnection: VoiceConnection, textChannel: TextChannel) {
     this.voiceConnection = voiceConnection;
     this.textChannel = textChannel;
     this.audioPlayer = createAudioPlayer({
@@ -48,6 +48,8 @@ class Player {
         oldState: VoiceConnectionState,
         newState: VoiceConnectionState
       ) => {
+        console.log("OLD:", oldState);
+        console.log("NEW:", newState);
         if (newState.status === "disconnected") {
           try {
             await Promise.race([
@@ -127,6 +129,7 @@ class Player {
     if (this.queue.length === 0) {
       log.info("Queue is empty. Destroying the connection.");
       this.voiceConnection.destroy();
+
       return this.textChannel.send(i18n.__("commands.song.queueEmpty"));
     }
 

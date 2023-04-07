@@ -14,7 +14,7 @@ const randomImage = (): String =>
 
 export const VALID_TEXT_CHANNELS = ["songboy", "song-boy", "songs", "music"];
 
-export const validateTextChannel = (
+export const invalidTextChannel = (
   interaction: ChatInputCommandInteraction
 ) => {
   return void interaction.reply({
