@@ -17,7 +17,7 @@
   "author": "Bryan Mytko",
   "license": "ISC",
   "dependencies": {
-    "@bryanmytko/youtube.ts": "^0.2.9",
+    "@bryanmytko/youtube.ts": "^0.2.10",
     "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.16.0",
     "@google-cloud/text-to-speech": "^4.0.4",
@@ -30,7 +30,8 @@
     "mongoose": "^6.7.5",
     "openai": "^3.2.1",
     "pm2": "^5.2.2",
-    "tslog": "^3.3.4"
+    "tslog": "^3.3.4",
+    "ytdl-core": "git+ssh://git@github.com:khlevon/node-ytdl-core.git#v4.11.3-patch.1"
   },
   "devDependencies": {
     "@types/i18n": "^0.13.4",
