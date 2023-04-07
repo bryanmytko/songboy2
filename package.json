@@ -19,7 +19,7 @@
   "dependencies": {
     "@bryanmytko/youtube.ts": "^0.2.9",
     "@discordjs/opus": "^0.8.0",
-    "@discordjs/voice": "^0.13.0",
+    "@discordjs/voice": "^0.16.0",
     "@google-cloud/text-to-speech": "^4.0.4",
     "discord.js": "^14.7.0",
     "dotenv": "^16.0.2",
