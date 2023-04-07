@@ -26,7 +26,7 @@ class Player {
   public readonly audioPlayer: AudioPlayer;
   public currentSong: Song | null | undefined;
   public queue: Song[];
-  public inProcess: boolean;
+  public hookPlaying: boolean
 
   constructor(voiceConnection: VoiceConnection, textChannel: TextChannel) {
     this.voiceConnection = voiceConnection;
@@ -38,14 +38,14 @@ class Player {
     });
     this.currentSong;
     this.queue = [];
-    this.inProcess = false;
+    this.hookPlaying = false;
 
     voiceConnection.subscribe(this.audioPlayer);
 
     this.voiceConnection.on(
       "stateChange",
       async (
-        oldState: VoiceConnectionState,
+        _: VoiceConnectionState,
         newState: VoiceConnectionState
       ) => {
         if (newState.status === "disconnected") {
@@ -72,21 +72,11 @@ class Player {
 
     this.audioPlayer.on(
       "stateChange",
-      (oldState: AudioPlayerState, newState: AudioPlayerState) => {
-        if (
-          newState.status === AudioPlayerStatus.Idle &&
-          oldState.status !== AudioPlayerStatus.Idle &&
-          !this.inProcess
-        )
+      (_: AudioPlayerState, newState: AudioPlayerState) => {
+        if (newState.status === AudioPlayerStatus.Idle) {
+          if (this.hookPlaying) return this.playSong();
           return this.processQueue();
-
-        /* This is how we play consecutive audio - this state occurs
-           when the hook finishes playing but the lock persists */
-        if (
-          newState.status === AudioPlayerStatus.Idle &&
-          oldState.status !== AudioPlayerStatus.Idle
-        )
-          return this.playSong();
+        }
       }
     );
   }
@@ -113,9 +103,7 @@ class Player {
     const speech = text ? await getSpeech(text) : "Something went wrong.";
     const speechResource = createAudioResource(speech);
 
-    this.inProcess = true;
     this.audioPlayer.play(speechResource);
-    this.inProcess = false;
   }
 
   public stop() {
@@ -137,6 +125,7 @@ class Player {
     }
 
     this.currentSong = this.queue.shift()!;
+    this.playHook();
   }
 
   private async playHook() {
@@ -149,7 +138,7 @@ class Player {
        this lock is required for playing consecutive audio (hook into song)
        It allows for a transition between states without just skipping to
        the next song */
-    this.inProcess = true;
+    this.hookPlaying = true;
     this.audioPlayer.play(hookResource);
   }
 
@@ -166,7 +155,7 @@ class Player {
       files: [image],
     });
 
-    this.inProcess = false;
+    this.hookPlaying = false;
     this.audioPlayer.play(resource);
 
     this.audioPlayer.on("error", (e: any) => {
