@@ -21,13 +21,8 @@ const chat = async (query: string) => {
     });
 
     return trimCompletion(completion.data.choices[0].text);
-  } catch (error: any) {
-    if (error.response) {
-      log.error(error.response.status);
-      log.error(error.response.data);
-    } else {
-      log.error(error.message);
-    }
+  } catch (e) {
+    log.error(e);
     return i18n.__("status.aiDown");
   }
 };

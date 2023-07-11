@@ -21,7 +21,7 @@ const execute = async (
     interaction.reply(i18n.__mf("commands.song.added", song.title));
     player.play(song);
     void saveSongHistory(song);
-  } catch (e: any) {
+  } catch (e) {
     log.info(
       `Song request failed. Maybe ${username} tried to request a song from a private channel.`
     );

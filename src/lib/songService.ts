@@ -24,25 +24,20 @@ class SongService {
   }
 
   async searchVideos(query: string): Promise<SearchResult> {
-    try {
-      const videoSearch = await this.youtube.videos.search({
-        q: query,
-        maxResults: 1,
-      });
+    const videoSearch = await this.youtube.videos.search({
+      q: query,
+      maxResults: 1,
+    });
 
-      const result = videoSearch.items[0];
-      const { snippet } = result;
-      const { videoId } = result.id;
+    const result = videoSearch.items[0];
+    const { snippet } = result;
+    const { videoId } = result.id;
 
-      return {
-        videoId,
-        title: decode(snippet.title) || "",
-        thumbnail: snippet.thumbnails.high.url || "",
-      };
-    } catch (e: any) {
-      log.error(e);
-      throw new Error(e);
-    }
+    return {
+      videoId,
+      title: decode(snippet.title) || "",
+      thumbnail: snippet.thumbnails.high.url || "",
+    };
   }
 
   getReadableStream(videoId: string): Promise<Readable> {

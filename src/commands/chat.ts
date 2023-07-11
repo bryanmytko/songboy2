@@ -26,7 +26,7 @@ const execute = async (
     player.speech(completion);
     await interaction.deferReply();
     return interaction.editReply(response);
-  } catch (e: any) {
+  } catch (e) {
     log.error(i18n.__("commands.chat.error"));
     interaction.reply(i18n.__("commands.chat.channelPermission"));
     player.voiceConnection.destroy();

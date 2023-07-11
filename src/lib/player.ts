@@ -158,7 +158,7 @@ class Player {
     this.hookPlaying = false;
     this.audioPlayer.play(resource);
 
-    this.audioPlayer.on("error", (e: any) => {
+    this.audioPlayer.on("error", (e) => {
       log.error("Error:", e)
       log.error("Oh noes. Audio player error");
       log.error(`Error playing ${this.currentSong?.title}`);

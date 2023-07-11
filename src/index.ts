@@ -40,14 +40,14 @@ let commandFiles;
 if (process.env.NODE_ENV === "production") {
   commandFiles = fs
     .readdirSync(commandsPath)
-    .filter((file: any) => file.endsWith(".js"));
+    .filter((file) => file.endsWith(".js"));
 } else {
   commandFiles = fs
     .readdirSync(commandsPath)
-    .filter((file: any) => file.endsWith(".ts"));
+    .filter((file) => file.endsWith(".ts"));
 }
 
-client.on("unhandledRejection", (e: any) => {
+client.on("unhandledRejection", (e) => {
   log.error("Unhandled promise rejection:", e);
 });
 
@@ -71,11 +71,14 @@ client.login(DISCORD_BOT_TOKEN);
 client.on(Events.InteractionCreate, async (interaction) => {
   const { channel: textChannel, guildId } = interaction;
 
-  if (!guildId || !(textChannel instanceof TextChannel) || !interaction.isChatInputCommand()) return;
-
   if (
-    !VALID_TEXT_CHANNELS.includes(textChannel.name)
-  ) {
+    !guildId ||
+    !(textChannel instanceof TextChannel) ||
+    !interaction.isChatInputCommand()
+  )
+    return;
+
+  if (!VALID_TEXT_CHANNELS.includes(textChannel.name)) {
     return invalidTextChannel(interaction);
   }
 
