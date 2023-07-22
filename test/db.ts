@@ -5,7 +5,7 @@ export const connect = async () => {
   try {
     const { MONGO_TEST_URL } = process.env;
     void mongoose.connect(MONGO_TEST_URL || "", { autoCreate: true });
-  } catch (e: any) {
+  } catch (e) {
     console.log("DB failed to connect!");
   }
 };
@@ -18,7 +18,7 @@ export const clear = async () => {
       const collection = collections[key];
       await collection.deleteMany({});
     }
-  } catch (e: any) {
+  } catch (e) {
     console.log("DB failed to clear!");
   }
 }
@@ -26,7 +26,7 @@ export const clear = async () => {
 export const disconnect = async () => {
   try {
     await mongoose.connection.close();
-  } catch (e: any) {
+  } catch (e) {
     console.log("DB failed to disconnect properly!");
   }
 };

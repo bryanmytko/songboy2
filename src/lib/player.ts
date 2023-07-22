@@ -62,8 +62,10 @@ class Player {
                 5_000
               ),
             ]);
-          } catch (e: any) {
-            log.error("VoiceConnection error", e?.message);
+          } catch (e) {
+            if (e instanceof Error) {
+              log.error("VoiceConnection error", e.message);
+            }
             voiceConnection.destroy();
           }
         }
@@ -159,7 +161,7 @@ class Player {
     this.audioPlayer.play(resource);
 
     this.audioPlayer.on("error", (e) => {
-      log.error("Error:", e)
+      if (e instanceof Error) log.error("Error:", e.message)
       log.error("Oh noes. Audio player error");
       log.error(`Error playing ${this.currentSong?.title}`);
     });

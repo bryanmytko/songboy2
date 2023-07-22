@@ -22,7 +22,7 @@ const chat = async (query: string) => {
 
     return trimCompletion(completion.data.choices[0].text);
   } catch (e) {
-    log.error(e);
+    if (e instanceof Error) log.error(e.message);
     return i18n.__("status.aiDown");
   }
 };
