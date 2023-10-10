@@ -1,3 +1,11 @@
+import { Logger } from "tslog";
+
+import { i18n } from "../../i18n.config";
+import chat from "../chat";
+import { Song, Source } from "../../types/player";
+
+const log: Logger = new Logger();
+
 const generateLeads = (song: string, name: string) => [
   `This one goes out to ${name}. Here's ${song}`,
   `${name} has requested ${song}, so let's take that one for a spin.`,
@@ -35,13 +43,29 @@ const generateLeads = (song: string, name: string) => [
   `This is the song that inspired Eddie Vedder to jump out of a bush. Here's ${song}`,
 ];
 
-const randomSongLead = (song: string, name: string) =>
-  `Here's a random pick, originally requested by ${name}. This is ${song}`;
+const aiRequest = (song: Song) =>
+  `Give me a funny DJ intro for a song called "${song.title}", requested by ${song.requester}`;
 
-const randomLead = (song: string, name: string) => {
-  const LEADS = generateLeads(song, name);
+const getLead = async (song: Song) => {
+  if (song.source === Source.Random) return randomSongLead(song);
+
+  const aiResponse = await chat(aiRequest(song));
+
+  if (aiResponse === i18n.__("status.aiDown")) {
+    log.info("OpenAI response failed. Defaulting to scripted lead.");
+    return randomScriptedLead(song);
+  }
+
+  return aiResponse;
+};
+
+const randomSongLead = (song: Song) =>
+  `Here's a random pick, originally requested by ${song.requester}. This is ${song.title}`;
+
+const randomScriptedLead = (song: Song) => {
+  const LEADS = generateLeads(song.title, song.requester);
 
   return LEADS[Math.floor(Math.random() * LEADS.length)];
 };
 
-export { randomLead, randomSongLead };
+export { getLead };
