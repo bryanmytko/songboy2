@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Songboy 2.0",
   "main": "dist/index.js",
+  "engines": {
+    "node": "20.8.0"
+  },
   "scripts": {
     "dokku": {
       "predeploy": "echo ${GOOGLE_CREDENTIALS} > /app/google-credentials.json",
