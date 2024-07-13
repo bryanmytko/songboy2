@@ -1,7 +1,6 @@
-import { Logger } from "tslog";
 import Youtube from "@bryanmytko/youtube.ts";
-import { Readable } from "stream";
 import { decode } from "html-entities";
+import ytdl from "@distube/ytdl-core";
 
 interface SearchResult {
   videoId: string;
@@ -9,7 +8,6 @@ interface SearchResult {
   thumbnail: string;
 }
 
-const log: Logger = new Logger();
 require("dotenv").config();
 
 const { GOOGLE_API_KEY } = process.env;
@@ -40,8 +38,11 @@ class SongService {
     };
   }
 
-  getReadableStream(videoId: string): Promise<Readable> {
-    return this.youtube.util.streamMP3(videoId);
+  getReadableStream(videoId: string) {
+    return ytdl(videoId, {
+      filter: "audioonly",
+      quality: "lowestaudio",
+    });
   }
 
   parseUrl(url: string): string {

@@ -26,7 +26,7 @@ class Player {
   public readonly audioPlayer: AudioPlayer;
   public currentSong: Song | null | undefined;
   public queue: Song[];
-  public hookPlaying: boolean
+  public hookPlaying: boolean;
 
   constructor(voiceConnection: VoiceConnection, textChannel: TextChannel) {
     this.voiceConnection = voiceConnection;
@@ -44,10 +44,7 @@ class Player {
 
     this.voiceConnection.on(
       "stateChange",
-      async (
-        _: VoiceConnectionState,
-        newState: VoiceConnectionState
-      ) => {
+      async (_: VoiceConnectionState, newState: VoiceConnectionState) => {
         if (newState.status === "disconnected") {
           try {
             await Promise.race([
@@ -149,8 +146,11 @@ class Player {
 
     const song = this.currentSong;
     const image = new AttachmentBuilder(song.thumbnail);
-    const stream = await songService.getReadableStream(song.videoId);
-    const resource = createAudioResource(stream);
+    const stream = songService.getReadableStream(song.videoId);
+
+    const resource = createAudioResource(stream, {
+      metadata: { title: song.title },
+    });
 
     await this.textChannel.send({
       content: i18n.__mf("commands.song.playing", song.title),
@@ -161,7 +161,8 @@ class Player {
     this.audioPlayer.play(resource);
 
     this.audioPlayer.on("error", (e) => {
-      if (e instanceof Error) log.error("Error:", e.message)
+      if (e instanceof Error)
+        log.error("Error:", e.message, "with track", e?.resource?.metadata);
       log.error("Oh noes. Audio player error");
       log.error(`Error playing ${this.currentSong?.title}`);
     });
