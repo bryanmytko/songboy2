@@ -31,13 +31,15 @@ const synthesizedSpeechStream = async (
 ) => {
   try {
     const [response] = await client.synthesizeSpeech(request);
+    log.error(response);
     const stream = new Readable();
     stream.push(response.audioContent);
     stream.push(null);
 
     return stream;
   } catch (e) {
-    log.error("Could not get a stream from google.", client);
+    log.error("Could not get a stream from google.");
+    log.error(client);
     return "Songboy is broken. Tell Bryan.";
   }
 };
