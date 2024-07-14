@@ -38,6 +38,7 @@ const synthesizedSpeechStream = async (
     return stream;
   } catch (e) {
     log.error("Could not get a stream from google.", client);
+    return "Songboy is broken. Tell Bryan.";
   }
 };
 
