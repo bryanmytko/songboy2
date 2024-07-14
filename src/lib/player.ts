@@ -131,6 +131,10 @@ class Player {
     if (!this.currentSong) return;
 
     const hook = await getHook(this.currentSong);
+    if (!hook) {
+      log.error("Could not get a hook. Aborting.");
+      return;
+    }
     const hookResource = createAudioResource(hook);
 
     /* Since we can't just wait for audio to finish playing,
