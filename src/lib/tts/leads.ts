@@ -47,6 +47,7 @@ const aiRequest = (song: Song) =>
   `Give me a funny DJ intro for a song called "${song.title}", requested by ${song.requester}`;
 
 const getLead = async (song: Song) => {
+  return randomScriptedLead(song);
   if (song.source === Source.Random) return randomSongLead(song);
 
   const aiResponse = await chat(aiRequest(song));
