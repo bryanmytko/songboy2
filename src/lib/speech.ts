@@ -6,6 +6,8 @@ import { randomVoice } from "./tts/voices";
 import { getLead } from "./tts/leads";
 import { Logger } from "tslog";
 
+process.env.GOOGLE_APPLICATION_CREDENTIALS = "../../google-key.json";
+
 const log: Logger = new Logger();
 const client = new textToSpeech.TextToSpeechClient();
 
