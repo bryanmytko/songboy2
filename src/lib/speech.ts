@@ -4,9 +4,7 @@ import { Readable } from "stream";
 import { Song } from "../types/player";
 import { randomVoice } from "./tts/voices";
 import { getLead } from "./tts/leads";
-import { Logger } from "tslog";
 
-const log: Logger = new Logger();
 const client = new textToSpeech.TextToSpeechClient();
 
 const getHook = async (song: Song) => {
@@ -29,19 +27,12 @@ const getSpeech = async (text: string) =>
 const synthesizedSpeechStream = async (
   request: google.cloud.texttospeech.v1.ISynthesizeSpeechRequest
 ) => {
-  try {
-    const [response] = await client.synthesizeSpeech(request);
-    log.error(response);
-    const stream = new Readable();
-    stream.push(response.audioContent);
-    stream.push(null);
+  const [response] = await client.synthesizeSpeech(request);
+  const stream = new Readable();
+  stream.push(response.audioContent);
+  stream.push(null);
 
-    return stream;
-  } catch (e) {
-    log.error("Could not get a stream from google.");
-    log.error(client);
-    return "Songboy is broken. Tell Bryan.";
-  }
+  return stream;
 };
 
 export { getHook, getSpeech };
