@@ -8,6 +8,8 @@ import { Logger } from "tslog";
 
 process.env.GOOGLE_APPLICATION_CREDENTIALS = "../../google-key.json";
 
+console.log("CREDS", process.env.GOOGLE_APPLICATION_CREDENTIALS);
+
 const log: Logger = new Logger();
 const client = new textToSpeech.TextToSpeechClient();
 
@@ -33,7 +35,6 @@ const synthesizedSpeechStream = async (
 ) => {
   try {
     const [response] = await client.synthesizeSpeech(request);
-    log.error(response);
     const stream = new Readable();
     stream.push(response.audioContent);
     stream.push(null);
@@ -41,7 +42,6 @@ const synthesizedSpeechStream = async (
     return stream;
   } catch (e) {
     log.error("Could not get a stream from google.");
-    log.error(client);
     return "Songboy is broken. Tell Bryan.";
   }
 };
