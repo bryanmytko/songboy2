@@ -23,7 +23,7 @@
     "@bryanmytko/youtube.ts": "^0.2.10",
     "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.16.0",
-    "@distube/ytdl-core": "^4.13.5",
+    "@distube/ytdl-core": "^4.13.7",
     "@google-cloud/text-to-speech": "^4.0.4",
     "discord.js": "^14.7.0",
     "dotenv": "^16.0.2",
