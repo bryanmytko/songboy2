@@ -23,7 +23,7 @@
     "@bryanmytko/youtube.ts": "^0.2.10",
     "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.16.0",
-    "@distube/ytdl-core": "^4.13.7",
+    "@distube/ytdl-core": "^4.14.4",
     "@google-cloud/text-to-speech": "^4.0.4",
     "discord.js": "^14.7.0",
     "dotenv": "^16.0.2",
@@ -32,6 +32,7 @@
     "i18n": "^0.15.1",
     "libsodium-wrappers": "^0.7.13",
     "mongoose": "^6.7.5",
+    "nodemon": "^3.1.4",
     "openai": "^3.2.1",
     "pm2": "^5.2.2",
     "tslog": "^3.3.4"
